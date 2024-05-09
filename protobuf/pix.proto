@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+option go_package = "PaymentSystem/protobuf/pix";
+
+package pix;
+
+service PixService {
+  rpc CreatePixKey(CreatePixKeyRequest) returns (CreatePixKeyResponse);
+  rpc Transfer(TransferRequest) returns (TransferResponse);
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+}
+
+message CreatePixKeyRequest {
+  string user_id = 1;
+  string key_type = 2;
+  string key_value = 3;
+}
+
+message CreatePixKeyResponse {
+  string key_id = 1;
+}
+
+message TransferRequest {
+  string from_user_id = 1;
+  string to_pix_key = 2;
+  double amount = 3;
+}
+
+message TransferResponse {
+  bool success = 1;
+}
+
+message CreateUserRequest {
+  string name = 1;
+  int32 age = 2;
+  string phone = 3;
+  string email = 4;
+  string cpf = 5;
+}
+
+message CreateUserResponse {
+  string account_id = 1;
+}
+
+message GetUserRequest {
+  string account_id = 1;
+}
+
+message GetUserResponse {
+  string name = 1;
+  int32 age = 2;
+  string phone = 3;
+  string email = 4;
+  string cpf = 5;
+  double balance = 6;
+}
