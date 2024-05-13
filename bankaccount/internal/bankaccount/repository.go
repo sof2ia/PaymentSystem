@@ -1,14 +1,16 @@
 package bankaccount
 
 import (
+	"PaymentSystem/bankaccount/internal"
 	"context"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"log"
 )
 
 type Repository struct {
-	db dynamodb.Client
+	Client internal.DynamoDBClient
 }
 
 func (r *Repository) Save(ctx context.Context, mov Movement) error {
@@ -20,13 +22,12 @@ func (r *Repository) Save(ctx context.Context, mov Movement) error {
 		Item:      movMap,
 		TableName: aws.String("Movement"),
 	}
-	_, err = r.db.PutItem(ctx, putItem)
-	if err != nil {
-		return err
-	}
-	return nil
+	log.Print(putItem)
+	_, err = internal.PutItem(ctx, r.Client, putItem)
+	log.Print(err)
+	return err
 }
 
-func NewRepository(db dynamodb.Client) Repository {
-	return Repository{db}
+func NewRepository(client internal.DynamoDBClient) Repository {
+	return Repository{Client: client}
 }
