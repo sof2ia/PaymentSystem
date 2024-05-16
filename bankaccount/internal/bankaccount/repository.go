@@ -5,15 +5,20 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
-	"log"
 )
 
-type Repository struct {
+type Repository interface {
+	Save(ctx context.Context, mov Movement) error
+	ListMovementsByUser(ctx context.Context, idUser string) ([]Movement, error)
+}
+
+type repository struct {
 	Client internal.DynamoDBClient
 }
 
-func (r *Repository) Save(ctx context.Context, mov Movement) error {
+func (r *repository) Save(ctx context.Context, mov Movement) error {
 	movMap, err := attributevalue.MarshalMap(mov)
 	if err != nil {
 		return err
@@ -22,12 +27,34 @@ func (r *Repository) Save(ctx context.Context, mov Movement) error {
 		Item:      movMap,
 		TableName: aws.String("Movement"),
 	}
-	log.Print(putItem)
 	_, err = internal.PutItem(ctx, r.Client, putItem)
-	log.Print(err)
 	return err
 }
 
+func (r *repository) ListMovementsByUser(ctx context.Context, idUser string) ([]Movement, error) {
+	keyEx := expression.Key("UserID").Equal(expression.Value(idUser))
+	expr, err := expression.NewBuilder().WithKeyCondition(keyEx).Build()
+	if err != nil {
+		return nil, err
+	}
+	input := &dynamodb.QueryInput{
+		TableName:                 aws.String("Movement"),
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+		KeyConditionExpression:    expr.KeyCondition(),
+	}
+	output, err := internal.Query(ctx, r.Client, input)
+	if err != nil {
+		return nil, err
+	}
+	var movements []Movement
+	err = attributevalue.UnmarshalListOfMaps(output.Items, &movements)
+	if err != nil {
+		return nil, err
+	}
+	return movements, err
+}
+
 func NewRepository(client internal.DynamoDBClient) Repository {
-	return Repository{Client: client}
+	return &repository{Client: client}
 }

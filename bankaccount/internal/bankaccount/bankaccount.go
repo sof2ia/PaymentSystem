@@ -1,9 +1,9 @@
 package bankaccount
 
 type TransferRequest struct {
-	FromUserID string
-	ToPixKey   string
-	Amount     float64
+	PayerID        string  `validate:"required"`
+	ReceiverPixKey string  `validate:"required"`
+	Amount         float64 `validate:"required,gt=0,lte=5000"`
 }
 
 type TransferRespond struct {
