@@ -16,5 +16,12 @@ type Movement struct {
 	UserID        string
 	Date          string
 	TransactionID string
-	OperationType string
+	OperationType OperationType
 }
+
+type OperationType string
+
+const (
+	Credit OperationType = "credit"
+	Debit  OperationType = "debit"
+)
