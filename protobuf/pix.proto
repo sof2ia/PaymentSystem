@@ -4,9 +4,11 @@ option go_package = "PaymentSystem/protobuf/pix";
 
 package pix;
 
+import "google/protobuf/empty.proto";
+
 service PixService {
   rpc CreatePixKey(CreatePixKeyRequest) returns (CreatePixKeyResponse);
-  rpc Transfer(TransferRequest) returns (TransferResponse);
+  rpc Transfer(TransferRequest) returns (google.protobuf.Empty);
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
 }
@@ -25,10 +27,6 @@ message TransferRequest {
   string from_user_id = 1;
   string to_pix_key = 2;
   double amount = 3;
-}
-
-message TransferResponse {
-  bool success = 1;
 }
 
 message CreateUserRequest {

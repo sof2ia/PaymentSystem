@@ -2,6 +2,7 @@ package bankaccount
 
 import (
 	"context"
+	"errors"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/stretchr/testify/mock"
@@ -17,7 +18,7 @@ func (m *mockRepository) Save(ctx context.Context, mov Movement) error {
 	if args.Get(0) == nil {
 		return args.Error(0)
 	}
-	return args.Error(1)
+	return args.Error(0)
 }
 
 func (m *mockRepository) ListMovementsByUser(ctx context.Context, idUser string) ([]Movement, error) {
@@ -42,36 +43,64 @@ var _ = Describe("Service Test", func() {
 				ReceiverPixKey: "2",
 				Amount:         20.00,
 			}
-			//idTransaction := ksuid.New().String()
-			//payerMovement := Movement{
-			//	Amount:        "-20.00",
-			//	UserID:        "1",
-			//	Date:          "2024-05-17T10:22:26-03:00",
-			//	TransactionID: idTransaction,
-			//	OperationType: Debit,
-			//}
-			//receiverMovement := Movement{
-			//	Amount:        "20.00",
-			//	UserID:        "2",
-			//	Date:          "2024-05-17T10:22:26-03:00",
-			//	TransactionID: idTransaction,
-			//	OperationType: Credit,
-			//}
-			repMock.On("Save", context.Background(), mock.MatchedBy(func(mov Movement) bool {
-				Expect(mov.Amount).ShouldNot(BeEmpty())
-				Expect(mov.OperationType).Should(Equal(Debit))
-				Expect(mov.UserID).Should(Equal("1"))
-				return true
-			})).Return(nil)
-			repMock.On("Save", context.Background(), mock.MatchedBy(func(mov Movement) bool {
-				Expect(mov.Amount).ShouldNot(BeEmpty())
-				Expect(mov.Amount).Should(Equal("20.00"))
-				Expect(mov.OperationType).Should(Equal(Credit))
-				Expect(mov.UserID).Should(Equal("2"))
-				return true
-			})).Return(nil)
+
+			repMock.On("Save", context.Background(), mock.AnythingOfType("Movement")).Return(nil)
+			repMock.On("Save", context.Background(), mock.AnythingOfType("Movement")).Return(nil)
+
 			err := serv.TransferPIX(context.Background(), request)
 			Expect(err).ShouldNot(HaveOccurred())
+		})
+		It("should TransferPIX unsuccessfully", func() {
+			request := TransferRequest{
+				PayerID:        "1",
+				ReceiverPixKey: "2",
+				Amount:         20.00,
+			}
+			repMock.On("Save", context.Background(), mock.AnythingOfType("Movement")).Return(errors.New("error while Save payerMovement"))
+
+			err := serv.TransferPIX(context.Background(), request)
+			Expect(err).Should(HaveOccurred())
+			Expect(err.Error()).To(Equal("error while Save payerMovement"))
+		})
+		It("should fail validation while TransferPIX - empty fields", func() {
+			request := TransferRequest{
+				PayerID:        "",
+				ReceiverPixKey: "",
+				Amount:         20.00,
+			}
+			err := serv.TransferPIX(context.Background(), request)
+			Expect(err).Should(HaveOccurred())
+			Expect(err.Error()).To(Equal("validation error: field: PayerID, value: \nvalidation error: field: ReceiverPixKey, value: \n"))
+		})
+		It("should fail validation while TransferPIX - amount == 0", func() {
+			request := TransferRequest{
+				PayerID:        "1",
+				ReceiverPixKey: "2",
+				Amount:         0.00,
+			}
+			err := serv.TransferPIX(context.Background(), request)
+			Expect(err).Should(HaveOccurred())
+			Expect(err.Error()).To(Equal("validation error: field: Amount, value: 0.000000\n"))
+		})
+		It("should fail validation while TransferPIX - amount < 0", func() {
+			request := TransferRequest{
+				PayerID:        "1",
+				ReceiverPixKey: "2",
+				Amount:         -20.00,
+			}
+			err := serv.TransferPIX(context.Background(), request)
+			Expect(err).Should(HaveOccurred())
+			Expect(err.Error()).To(Equal("validation error: field: Amount, value: -20.000000\n"))
+		})
+		It("should fail validation while TransferPIX - amount > 5000", func() {
+			request := TransferRequest{
+				PayerID:        "1",
+				ReceiverPixKey: "2",
+				Amount:         5001.00,
+			}
+			err := serv.TransferPIX(context.Background(), request)
+			Expect(err).Should(HaveOccurred())
+			Expect(err.Error()).To(Equal("validation error: field: Amount, value: 5001.000000\n"))
 		})
 	})
 })

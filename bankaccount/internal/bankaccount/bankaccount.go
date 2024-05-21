@@ -1,12 +1,14 @@
 package bankaccount
 
+import pb "PaymentSystem/protobuf"
+
 type TransferRequest struct {
 	PayerID        string  `validate:"required"`
 	ReceiverPixKey string  `validate:"required"`
 	Amount         float64 `validate:"required,gt=0,lte=5000"`
 }
 
-type TransferRespond struct {
+type TransferResponse struct {
 	Success bool
 }
 
@@ -25,3 +27,11 @@ const (
 	Credit OperationType = "credit"
 	Debit  OperationType = "debit"
 )
+
+func ConvertTransferRequest(requestPB *pb.TransferRequest) TransferRequest {
+	return TransferRequest{
+		PayerID:        requestPB.FromUserId,
+		ReceiverPixKey: requestPB.ToPixKey,
+		Amount:         requestPB.Amount,
+	}
+}

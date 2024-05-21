@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -30,7 +31,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PixServiceClient interface {
 	CreatePixKey(ctx context.Context, in *CreatePixKeyRequest, opts ...grpc.CallOption) (*CreatePixKeyResponse, error)
-	Transfer(ctx context.Context, in *TransferRequest, opts ...grpc.CallOption) (*TransferResponse, error)
+	Transfer(ctx context.Context, in *TransferRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 }
@@ -52,8 +53,8 @@ func (c *pixServiceClient) CreatePixKey(ctx context.Context, in *CreatePixKeyReq
 	return out, nil
 }
 
-func (c *pixServiceClient) Transfer(ctx context.Context, in *TransferRequest, opts ...grpc.CallOption) (*TransferResponse, error) {
-	out := new(TransferResponse)
+func (c *pixServiceClient) Transfer(ctx context.Context, in *TransferRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, PixService_Transfer_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -84,7 +85,7 @@ func (c *pixServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opts
 // for forward compatibility
 type PixServiceServer interface {
 	CreatePixKey(context.Context, *CreatePixKeyRequest) (*CreatePixKeyResponse, error)
-	Transfer(context.Context, *TransferRequest) (*TransferResponse, error)
+	Transfer(context.Context, *TransferRequest) (*emptypb.Empty, error)
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	mustEmbedUnimplementedPixServiceServer()
@@ -97,7 +98,7 @@ type UnimplementedPixServiceServer struct {
 func (UnimplementedPixServiceServer) CreatePixKey(context.Context, *CreatePixKeyRequest) (*CreatePixKeyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePixKey not implemented")
 }
-func (UnimplementedPixServiceServer) Transfer(context.Context, *TransferRequest) (*TransferResponse, error) {
+func (UnimplementedPixServiceServer) Transfer(context.Context, *TransferRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Transfer not implemented")
 }
 func (UnimplementedPixServiceServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
