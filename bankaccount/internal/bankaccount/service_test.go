@@ -62,45 +62,33 @@ var _ = Describe("Service Test", func() {
 			Expect(err).Should(HaveOccurred())
 			Expect(err.Error()).To(Equal("error while Save payerMovement"))
 		})
-		It("should fail validation while TransferPIX - empty fields", func() {
-			request := TransferRequest{
-				PayerID:        "",
-				ReceiverPixKey: "",
-				Amount:         20.00,
-			}
-			err := serv.TransferPIX(context.Background(), request)
-			Expect(err).Should(HaveOccurred())
-			Expect(err.Error()).To(Equal("validation error: field: PayerID, value: \nvalidation error: field: ReceiverPixKey, value: \n"))
+	})
+	Context("DepositAmount", func() {
+		var serv Service
+		var repMock *mockRepository
+		BeforeEach(func() {
+			repMock = new(mockRepository)
+			serv = NewService(repMock)
 		})
-		It("should fail validation while TransferPIX - amount == 0", func() {
-			request := TransferRequest{
-				PayerID:        "1",
-				ReceiverPixKey: "2",
-				Amount:         0.00,
+		It("should pass DepositAmount successfully", func() {
+			deposit := DepositAmountRequest{
+				Amount: 2000.00,
+				UserID: "1",
 			}
-			err := serv.TransferPIX(context.Background(), request)
-			Expect(err).Should(HaveOccurred())
-			Expect(err.Error()).To(Equal("validation error: field: Amount, value: 0.000000\n"))
+			repMock.On("Save", mock.Anything, mock.AnythingOfType("Movement")).Return(nil)
+
+			err := serv.DepositAmount(context.Background(), deposit)
+			Expect(err).ShouldNot(HaveOccurred())
 		})
-		It("should fail validation while TransferPIX - amount < 0", func() {
-			request := TransferRequest{
-				PayerID:        "1",
-				ReceiverPixKey: "2",
-				Amount:         -20.00,
+		It("should pass DepositAmount unsuccessfully", func() {
+			deposit := DepositAmountRequest{
+				Amount: 2000.00,
+				UserID: "1",
 			}
-			err := serv.TransferPIX(context.Background(), request)
+			repMock.On("Save", mock.Anything, mock.AnythingOfType("Movement")).Return(errors.New("error while DepositAmount"))
+			err := serv.DepositAmount(context.Background(), deposit)
 			Expect(err).Should(HaveOccurred())
-			Expect(err.Error()).To(Equal("validation error: field: Amount, value: -20.000000\n"))
-		})
-		It("should fail validation while TransferPIX - amount > 5000", func() {
-			request := TransferRequest{
-				PayerID:        "1",
-				ReceiverPixKey: "2",
-				Amount:         5001.00,
-			}
-			err := serv.TransferPIX(context.Background(), request)
-			Expect(err).Should(HaveOccurred())
-			Expect(err.Error()).To(Equal("validation error: field: Amount, value: 5001.000000\n"))
+			Expect(err.Error()).To(Equal("error while DepositAmount"))
 		})
 	})
 })

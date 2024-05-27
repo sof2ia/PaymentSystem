@@ -11,6 +11,7 @@ service PixService {
   rpc Transfer(TransferRequest) returns (google.protobuf.Empty);
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  rpc DepositAmount(DepositAmountRequest) returns (google.protobuf.Empty);
 }
 
 message CreatePixKeyRequest {
@@ -52,4 +53,9 @@ message GetUserResponse {
   string email = 4;
   string cpf = 5;
   double balance = 6;
+}
+
+message DepositAmountRequest {
+  string amount = 1;
+  string user_id = 2;
 }

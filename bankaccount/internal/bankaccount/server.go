@@ -15,15 +15,28 @@ type Server struct {
 }
 
 func (s *Server) Transfer(ctx context.Context, request *pb.TransferRequest) (*emptypb.Empty, error) {
-	if request.FromUserId == "" {
-		log.Error().Msg("cannot transfer with empty ID")
-		return nil, status.Errorf(codes.InvalidArgument, "cannot transfer with empty ID")
+	log.Info().Msgf("Starting Transfer: %v", request)
+	req, err := ConvertTransferRequest(request)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
-	req := ConvertTransferRequest(request)
-	err := s.serviceBankAccount.TransferPIX(ctx, req)
+	err = s.serviceBankAccount.TransferPIX(ctx, req)
 	if err != nil {
 		log.Error().Err(err).Msg("error while transfer pix")
 		return nil, status.Errorf(codes.Internal, "error while transfer pix %s", err.Error())
+	}
+	return &emptypb.Empty{}, nil
+}
+
+func (s *Server) DepositAmount(ctx context.Context, deposit *pb.DepositAmountRequest) (*emptypb.Empty, error) {
+	dep, err := ConvertDepositAmount(deposit)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+	err = s.serviceBankAccount.DepositAmount(ctx, dep)
+	if err != nil {
+		log.Error().Err(err).Msg("error while DepositAmount")
+		return nil, status.Errorf(codes.InvalidArgument, "error while DepositAmount %s", err.Error())
 	}
 	return &emptypb.Empty{}, nil
 }
