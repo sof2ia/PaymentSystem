@@ -39,11 +39,11 @@ message CreateUserRequest {
 }
 
 message CreateUserResponse {
-  string account_id = 1;
+  string user_id = 1;
 }
 
 message GetUserRequest {
-  string account_id = 1;
+  string user_id = 1;
 }
 
 message GetUserResponse {

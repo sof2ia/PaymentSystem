@@ -1,4 +1,4 @@
-package bankaccount_test
+package internal
 
 import (
 	. "github.com/onsi/ginkgo/v2"
@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestBankAccount(t *testing.T) {
+func TestUser(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Internal Suite")
 }
