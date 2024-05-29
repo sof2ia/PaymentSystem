@@ -2,29 +2,25 @@ package internal
 
 import (
 	"context"
-	"github.com/jackc/pgx/v5"
 )
 
 type Repository interface {
-	CreateUser(ctx context.Context, user User) (int64, error)
+	CreateUser(ctx context.Context, user User) error
 }
 
 type repository struct {
-	db *pgx.Conn
+	client pgxClient
 }
 
-func (r *repository) CreateUser(ctx context.Context, user User) (int64, error) {
-	resp := r.db.QueryRow(ctx, `INSERT INTO Users ("name", "age", "phone", "email", "cpf") VALUES (?, ?, ?, ?, ?) RETURNING id`,
-		user.Name, user.Age, user.Phone, user.Email, user.CPF)
-	var id int64
-	err := resp.Scan(&id)
-
+func (r *repository) CreateUser(ctx context.Context, user User) error {
+	_, err := Exec(ctx, `INSERT INTO Users ("name", "age", "phone", "email", "cpf") VALUES ($1, $2, $3, $4, $5)`,
+		r.client, user.Name, user.Age, user.Phone, user.Email, user.CPF)
 	if err != nil {
-		return 0, err
+		return err
 	}
-	return id, nil
+	return nil
 }
 
-func NewRepository(db *pgx.Conn) Repository {
-	return &repository{db: db}
+func NewRepository(client pgxClient) Repository {
+	return &repository{client: client}
 }
