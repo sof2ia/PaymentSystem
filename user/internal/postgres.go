@@ -10,5 +10,5 @@ type pgxClient interface {
 }
 
 func Exec(ctx context.Context, sql string, client pgxClient, arguments ...any) (pgconn.CommandTag, error) {
-	return client.Exec(ctx, sql, arguments)
+	return client.Exec(ctx, sql, arguments...)
 }
