@@ -59,3 +59,5 @@ message DepositAmountRequest {
   string amount = 1;
   string user_id = 2;
 }
+
+//message GetBalance + Amount

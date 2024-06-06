@@ -51,7 +51,7 @@ func (s *service) TransferPIX(ctx context.Context, request TransferRequest) erro
 }
 
 func (s *service) DepositAmount(ctx context.Context, deposit DepositAmountRequest) error {
-
+	// GetBalance + depositAmount
 	depositAmount := strconv.FormatFloat(deposit.Amount, 'f', 2, 64)
 	depositMovement := Movement{
 		ID:            ksuid.New().String(),

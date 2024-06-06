@@ -7,19 +7,27 @@ import (
 )
 
 type Service interface {
-	CreateUser(ctx context.Context, user User) error
+	CreateUser(ctx context.Context, user CreateUserRequest) (int64, error)
 }
 
 type service struct {
 	userRepository Repository
 }
 
-func (s *service) CreateUser(ctx context.Context, user User) error {
-	err := s.userRepository.CreateUser(ctx, user)
-	if err != nil {
-		return status.Errorf(codes.Internal, "error while CreateUser %s", err)
+func (s *service) CreateUser(ctx context.Context, user CreateUserRequest) (userID int64, err error) {
+	createUser := User{
+		Name:    user.Name,
+		Age:     user.Age,
+		Phone:   user.Phone,
+		Email:   user.Email,
+		CPF:     user.CPF,
+		Balance: 0.0,
 	}
-	return nil
+	userID, err = s.userRepository.CreateUser(ctx, createUser)
+	if err != nil {
+		return 0, status.Errorf(codes.Internal, "error while CreateUser %s", err)
+	}
+	return userID, nil
 }
 
 func NewService(userRepository Repository) Service {

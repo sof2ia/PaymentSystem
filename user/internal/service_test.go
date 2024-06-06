@@ -13,9 +13,9 @@ type mockRepository struct {
 	Repository
 }
 
-func (m *mockRepository) CreateUser(ctx context.Context, user User) error {
+func (m *mockRepository) CreateUser(ctx context.Context, user User) (int64, error) {
 	args := m.Called(ctx, user)
-	return args.Error(0)
+	return args.Get(0).(int64), args.Error(1)
 }
 
 var _ = Describe("Service Test", func() {
@@ -27,27 +27,44 @@ var _ = Describe("Service Test", func() {
 	})
 	It("should CreateUser successfully", func() {
 		user := User{
+			Name:    "Name1",
+			Age:     20,
+			Phone:   "+55 12 91234 5678",
+			Email:   "name_1@gmail.com",
+			CPF:     "123.456.789-12",
+			Balance: 0.0,
+		}
+		mock.On("CreateUser", context.Background(), user).Return(int64(1), nil)
+		createUser := CreateUserRequest{
 			Name:  "Name1",
 			Age:   20,
 			Phone: "+55 12 91234 5678",
 			Email: "name_1@gmail.com",
 			CPF:   "123.456.789-12",
 		}
-		mock.On("CreateUser", context.Background(), user).Return(nil)
-		err := serv.CreateUser(context.Background(), user)
+		id, err := serv.CreateUser(context.Background(), createUser)
 		Expect(err).ShouldNot(HaveOccurred())
+		Expect(id).Should(Equal(int64(1)))
+
 	})
 	It("should CreateUser unsuccessfully", func() {
 		user := User{
+			Name:    "",
+			Age:     20,
+			Phone:   "+55 12 91234 5678",
+			Email:   "name_1@gmail.com",
+			CPF:     "123.456.789-12",
+			Balance: 0.0,
+		}
+		mock.On("CreateUser", context.Background(), user).Return(int64(0), errors.New("error while CreateUser"))
+		createUser := CreateUserRequest{
 			Name:  "",
 			Age:   20,
 			Phone: "+55 12 91234 5678",
 			Email: "name_1@gmail.com",
 			CPF:   "123.456.789-12",
 		}
-		mock.On("CreateUser", context.Background(), user).Return(errors.New("error while CreateUser"))
-		err := serv.CreateUser(context.Background(), user)
+		_, err := serv.CreateUser(context.Background(), createUser)
 		Expect(err).Should(HaveOccurred())
 	})
-
 })
