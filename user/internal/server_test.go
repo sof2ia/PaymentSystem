@@ -3,6 +3,7 @@ package internal
 import (
 	pb "PaymentSystem/protobuf"
 	"context"
+	"errors"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/stretchr/testify/mock"
@@ -37,36 +38,58 @@ func (m *mockService) CreateUser(ctx context.Context, user CreateUserRequest) (i
 }
 
 var _ = Describe("Server Test", func() {
-	var grpcClient pb.PixServiceClient
-	var servMock *mockService
-	var ctx context.Context
-	BeforeEach(func() {
-		servMock = new(mockService)
-		ctx = context.Background()
-		conn, err := grpc.DialContext(ctx, "", grpc.WithInsecure(), grpc.WithContextDialer(dialer(servMock)))
-		if err != nil {
-			log.Fatal(err)
-		}
-		grpcClient = pb.NewPixServiceClient(conn)
-	})
-	It("should CreateUser successfully", func() {
-		userPB := &pb.CreateUserRequest{
-			Name:  "Name First",
-			Age:   20,
-			Phone: "+5512912345678",
-			Email: "name1@gmail.com",
-			Cpf:   "12345678912",
-		}
-		servMock.On("CreateUser", context.Background(), CreateUserRequest{
-			Name:  "Name First",
-			Age:   20,
-			Phone: "+5512912345678",
-			Email: "name1@gmail.com",
-			CPF:   "12345678912",
-		}).Return(int64(1), nil)
+	Context("Server Test", func() {
+		var grpcClient pb.PixServiceClient
+		var servMock *mockService
+		var ctx context.Context
+		BeforeEach(func() {
+			servMock = new(mockService)
+			ctx = context.Background()
+			conn, err := grpc.DialContext(ctx, "", grpc.WithInsecure(), grpc.WithContextDialer(dialer(servMock)))
+			if err != nil {
+				log.Fatal(err)
+			}
+			grpcClient = pb.NewPixServiceClient(conn)
+		})
+		It("should CreateUser successfully", func() {
+			userPB := &pb.CreateUserRequest{
+				Name:  "Name First",
+				Age:   20,
+				Phone: "+5512912345678",
+				Email: "name1@gmail.com",
+				Cpf:   "12345678912",
+			}
+			servMock.On("CreateUser", mock.Anything, CreateUserRequest{
+				Name:  "Name First",
+				Age:   20,
+				Phone: "+5512912345678",
+				Email: "name1@gmail.com",
+				CPF:   "12345678912",
+			}).Return(int64(1), nil)
 
-		res, err := grpcClient.CreateUser(ctx, userPB)
-		Expect(err).ShouldNot(HaveOccurred())
-		Expect(res.AccountId).Should(Equal("1"))
+			res, err := grpcClient.CreateUser(ctx, userPB)
+			Expect(err).ShouldNot(HaveOccurred())
+			Expect(res.AccountId).Should(Equal("1"))
+		})
+		It("should CreateUser unsuccessfully", func() {
+			userPB := &pb.CreateUserRequest{
+				Name:  "Name First",
+				Age:   20,
+				Phone: "+5512912345678",
+				Email: "name1@gmail.com",
+				Cpf:   "12345678912",
+			}
+			servMock.On("CreateUser", mock.Anything, CreateUserRequest{
+				Name:  "Name First",
+				Age:   20,
+				Phone: "+5512912345678",
+				Email: "name1@gmail.com",
+				CPF:   "12345678912",
+			}).Return(int64(0), errors.New("error while CreateUser"))
+
+			res, err := grpcClient.CreateUser(ctx, userPB)
+			Expect(err).Should(HaveOccurred())
+			Expect(res).Should(BeNil())
+		})
 	})
 })
