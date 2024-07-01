@@ -72,7 +72,7 @@ type OperationType string
 
 const (
 	Credit OperationType = "credit"
-	Debit  OperationType = "debit"
+	Debt   OperationType = "debt"
 )
 
 func ConvertTransferRequest(requestPB *pb.TransferRequest) (TransferRequest, error) {
