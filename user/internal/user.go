@@ -40,3 +40,28 @@ func ConvertCreateUserRequest(userPB *pb.CreateUserRequest) (CreateUserRequest, 
 type CreateUserResponse struct {
 	ID int64
 }
+
+type GetUserRequest struct {
+	ID int64
+}
+
+type GetUserResponse struct {
+	Name    string  `validate:"required"`
+	Age     int32   `validate:"required,gte=18"`
+	Phone   string  `validate:"required,phone"`
+	Email   string  `validate:"required,email"`
+	CPF     string  `validate:"required,CPF"`
+	Balance float64 `validate:"required"`
+}
+
+func ConvertGetUserResponse(user GetUserResponse) (*pb.GetUserResponse, error) {
+	g := &pb.GetUserResponse{
+		Name:    user.Name,
+		Age:     user.Age,
+		Phone:   user.Phone,
+		Email:   user.Email,
+		Cpf:     user.CPF,
+		Balance: user.Balance,
+	}
+	return g, nil
+}
