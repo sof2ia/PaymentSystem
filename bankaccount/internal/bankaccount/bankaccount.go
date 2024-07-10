@@ -103,3 +103,11 @@ func ConvertDepositAmount(depositPB *pb.DepositAmountRequest) (DepositAmountRequ
 	}
 	return d, nil
 }
+
+type GetBalanceRequest struct {
+	ID int
+}
+
+type GetBalanceResponse struct {
+	Balance float64
+}

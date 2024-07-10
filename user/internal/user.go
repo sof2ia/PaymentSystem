@@ -5,13 +5,14 @@ import (
 )
 
 type User struct {
-	ID      int64
-	Name    string
-	Age     int32
-	Phone   string
-	Email   string
-	CPF     string
-	Balance float64
+	ID         int
+	Name       string
+	Age        int32
+	Phone      string
+	Email      string
+	CPF        string
+	Balance    float64
+	ListPixKey []PixKey
 }
 
 type CreateUserRequest struct {
@@ -37,24 +38,7 @@ func ConvertCreateUserRequest(userPB *pb.CreateUserRequest) (CreateUserRequest, 
 	return c, nil
 }
 
-type CreateUserResponse struct {
-	ID int64
-}
-
-type GetUserRequest struct {
-	ID int64
-}
-
-type GetUserResponse struct {
-	Name    string  `validate:"required"`
-	Age     int32   `validate:"required,gte=18"`
-	Phone   string  `validate:"required,phone"`
-	Email   string  `validate:"required,email"`
-	CPF     string  `validate:"required,CPF"`
-	Balance float64 `validate:"required"`
-}
-
-func ConvertGetUserResponse(user GetUserResponse) (*pb.GetUserResponse, error) {
+func ConvertGetUserResponse(user *User) (*pb.GetUserResponse, error) {
 	g := &pb.GetUserResponse{
 		Name:    user.Name,
 		Age:     user.Age,
@@ -65,3 +49,19 @@ func ConvertGetUserResponse(user GetUserResponse) (*pb.GetUserResponse, error) {
 	}
 	return g, nil
 }
+
+type PixKey struct {
+	KeyID    string
+	UserID   int
+	KeyType  KeyType
+	KeyValue string
+}
+
+type KeyType string
+
+const (
+	Phone  KeyType = "phone"
+	Email  KeyType = "email"
+	CPF    KeyType = "cpf"
+	Random KeyType = "random"
+)

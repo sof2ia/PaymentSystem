@@ -184,5 +184,44 @@ var _ = Describe("Service Test", func() {
 			Expect(err).Should(HaveOccurred())
 			Expect(err.Error()).To(Equal("error while saving"))
 		})
+
+	})
+	Context("GetBalance Test", func() {
+		var serv Service
+		var repMock *mockRepository
+		BeforeEach(func() {
+			repMock = new(mockRepository)
+			serv = NewService(repMock)
+		})
+		It("should GetBalance successfully", func() {
+			repMock.On("ListMovementsByUser", mock.Anything, "1").Return([]Movement{
+				{
+					ID:            "1",
+					Amount:        "100",
+					Date:          "1/07/2024",
+					TransactionID: "rhk5",
+					OperationType: Credit,
+				},
+				{
+					ID:            "2",
+					Amount:        "-80",
+					Date:          "1/07/2024",
+					TransactionID: "udve4",
+					OperationType: Debt,
+				},
+			}, nil)
+
+			idRequest := GetBalanceRequest{ID: 1}
+			res, err := serv.GetBalance(context.Background(), idRequest)
+			Expect(err).ShouldNot(HaveOccurred())
+			Expect(res.Balance).Should(Equal(float64(20)))
+		})
+		It("should GetBalance unsuccessfully", func() {
+			repMock.On("ListMovementsByUser", mock.Anything, "1").Return(([]Movement)(nil), errors.New("error while GetBalance"))
+			idRequest := GetBalanceRequest{ID: 1}
+			res, err := serv.GetBalance(context.Background(), idRequest)
+			Expect(err).Should(HaveOccurred())
+			Expect(res).Should(BeNil())
+		})
 	})
 })

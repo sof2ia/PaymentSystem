@@ -12,28 +12,45 @@ import (
 type Service interface {
 	TransferPIX(ctx context.Context, request TransferRequest) error
 	DepositAmount(ctx context.Context, deposit DepositAmountRequest) error
+	GetBalance(ctx context.Context, request GetBalanceRequest) (*GetBalanceResponse, error)
 }
 
 type service struct {
 	repBankAccount Repository
 }
 
-func (s *service) TransferPIX(ctx context.Context, request TransferRequest) error {
-	payerMovements, err := s.repBankAccount.ListMovementsByUser(ctx, request.PayerID)
+func (s *service) GetBalance(ctx context.Context, request GetBalanceRequest) (*GetBalanceResponse, error) {
+	requestIDStr := strconv.Itoa(request.ID)
+	log.Printf("error 4: %s", requestIDStr)
+	payerMovements, err := s.repBankAccount.ListMovementsByUser(ctx, requestIDStr)
+	log.Printf("error 5: %+v", payerMovements)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	var balance float64
 	for _, movement := range payerMovements {
 		balanceStr, err := strconv.ParseFloat(movement.Amount, 64)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		balance += balanceStr
 	}
+	log.Printf("error 6: %v", balance)
 
-	if balance < request.Amount {
+	return &GetBalanceResponse{Balance: balance}, nil
+}
+
+func (s *service) TransferPIX(ctx context.Context, request TransferRequest) error {
+	payerIDStr, err := strconv.Atoi(request.PayerID)
+	if err != nil {
+		return err
+	}
+	balance, err := s.GetBalance(ctx, GetBalanceRequest{ID: payerIDStr})
+	if err != nil {
+		return err
+	}
+	if balance.Balance < request.Amount {
 		return errors.New("insufficient balance")
 	}
 
@@ -71,21 +88,16 @@ func (s *service) TransferPIX(ctx context.Context, request TransferRequest) erro
 
 func (s *service) DepositAmount(ctx context.Context, deposit DepositAmountRequest) error {
 
-	payerMovements, err := s.repBankAccount.ListMovementsByUser(ctx, deposit.UserID)
+	depositIDStr, err := strconv.Atoi(deposit.UserID)
+	if err != nil {
+		return err
+	}
+	balance, err := s.GetBalance(ctx, GetBalanceRequest{ID: depositIDStr})
 	if err != nil {
 		return err
 	}
 
-	var balance float64
-	for _, movement := range payerMovements {
-		balanceStr, err := strconv.ParseFloat(movement.Amount, 64)
-		if err != nil {
-			return err
-		}
-		balance += balanceStr
-	}
-
-	newBalance := balance + deposit.Amount
+	newBalance := balance.Balance + deposit.Amount
 	depositAmount := strconv.FormatFloat(newBalance, 'f', 2, 64)
 
 	depositMovement := Movement{

@@ -13,6 +13,7 @@ import (
 	"google.golang.org/grpc/test/bufconn"
 	"log"
 	"net"
+	//"strconv"
 )
 
 type mockService struct {
@@ -46,8 +47,16 @@ func (m *mockService) DepositAmount(ctx context.Context, deposit DepositAmountRe
 	return args.Error(0)
 }
 
+func (m *mockService) GetBalance(ctx context.Context, request GetBalanceRequest) (*GetBalanceResponse, error) {
+	args := m.Called(ctx, request)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*GetBalanceResponse), args.Error(1)
+}
+
 var _ = Describe("Server Test", func() {
-	Context("Transfer", func() {
+	Context("Server Test", func() {
 		var grpcClient pb.PixServiceClient
 		var servMock *mockService
 		var ctx context.Context
@@ -128,20 +137,6 @@ var _ = Describe("Server Test", func() {
 			_, err := grpcClient.Transfer(ctx, pbRequest)
 			Expect(err).Should(HaveOccurred())
 		})
-	})
-	Context("DepositAmount", func() {
-		var grpcClient pb.PixServiceClient
-		var servMock *mockService
-		var ctx context.Context
-		BeforeEach(func() {
-			servMock = new(mockService)
-			ctx = context.Background()
-			conn, err := grpc.DialContext(ctx, "", grpc.WithInsecure(), grpc.WithContextDialer(dialer(servMock)))
-			if err != nil {
-				log.Fatal(err)
-			}
-			grpcClient = pb.NewPixServiceClient(conn)
-		})
 		It("should pass DepositAmount successfully", func() {
 			pbDeposit := &pb.DepositAmountRequest{
 				Amount: "2000.00",
@@ -191,6 +186,28 @@ var _ = Describe("Server Test", func() {
 			})).Return(errors.New("error while DepositAmount"))
 			_, err := grpcClient.DepositAmount(ctx, pbDeposit)
 			Expect(err).Should(HaveOccurred())
+		})
+		It("should pass GetBalance successfully", func() {
+			pbRequest := &pb.GetBalanceRequest{IdUser: "1"}
+			servMock.On("GetBalance", mock.Anything, mock.MatchedBy(func(req GetBalanceRequest) bool {
+				Expect(req).ShouldNot(BeNil())
+				Expect(req.ID).Should(Equal(1))
+				return true
+			})).Return(&GetBalanceResponse{Balance: float64(1000)}, nil)
+			res, err := grpcClient.GetBalance(ctx, pbRequest)
+			Expect(err).ShouldNot(HaveOccurred())
+			Expect(res.Balance).Should(Equal(float64(1000)))
+		})
+		It("GetBalance should fail", func() {
+			pbRequest := &pb.GetBalanceRequest{IdUser: "1"}
+			servMock.On("GetBalance", mock.Anything, mock.MatchedBy(func(req GetBalanceRequest) bool {
+				Expect(req).ShouldNot(BeNil())
+				Expect(req.ID).Should(Equal(1))
+				return true
+			})).Return(nil, errors.New("error while GetBalance"))
+			res, err := grpcClient.GetBalance(ctx, pbRequest)
+			Expect(err).Should(HaveOccurred())
+			Expect(res).Should(BeNil())
 		})
 	})
 })

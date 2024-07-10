@@ -25,6 +25,7 @@ const (
 	PixService_CreateUser_FullMethodName    = "/pix.PixService/CreateUser"
 	PixService_GetUser_FullMethodName       = "/pix.PixService/GetUser"
 	PixService_DepositAmount_FullMethodName = "/pix.PixService/DepositAmount"
+	PixService_GetBalance_FullMethodName    = "/pix.PixService/GetBalance"
 )
 
 // PixServiceClient is the client API for PixService service.
@@ -36,6 +37,7 @@ type PixServiceClient interface {
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	DepositAmount(ctx context.Context, in *DepositAmountRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	GetBalance(ctx context.Context, in *GetBalanceRequest, opts ...grpc.CallOption) (*GetBalanceResponse, error)
 }
 
 type pixServiceClient struct {
@@ -91,6 +93,15 @@ func (c *pixServiceClient) DepositAmount(ctx context.Context, in *DepositAmountR
 	return out, nil
 }
 
+func (c *pixServiceClient) GetBalance(ctx context.Context, in *GetBalanceRequest, opts ...grpc.CallOption) (*GetBalanceResponse, error) {
+	out := new(GetBalanceResponse)
+	err := c.cc.Invoke(ctx, PixService_GetBalance_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PixServiceServer is the server API for PixService service.
 // All implementations must embed UnimplementedPixServiceServer
 // for forward compatibility
@@ -100,6 +111,7 @@ type PixServiceServer interface {
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	DepositAmount(context.Context, *DepositAmountRequest) (*emptypb.Empty, error)
+	GetBalance(context.Context, *GetBalanceRequest) (*GetBalanceResponse, error)
 	mustEmbedUnimplementedPixServiceServer()
 }
 
@@ -121,6 +133,9 @@ func (UnimplementedPixServiceServer) GetUser(context.Context, *GetUserRequest) (
 }
 func (UnimplementedPixServiceServer) DepositAmount(context.Context, *DepositAmountRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DepositAmount not implemented")
+}
+func (UnimplementedPixServiceServer) GetBalance(context.Context, *GetBalanceRequest) (*GetBalanceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBalance not implemented")
 }
 func (UnimplementedPixServiceServer) mustEmbedUnimplementedPixServiceServer() {}
 
@@ -225,6 +240,24 @@ func _PixService_DepositAmount_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PixService_GetBalance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBalanceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PixServiceServer).GetBalance(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PixService_GetBalance_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PixServiceServer).GetBalance(ctx, req.(*GetBalanceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PixService_ServiceDesc is the grpc.ServiceDesc for PixService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -251,6 +284,10 @@ var PixService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DepositAmount",
 			Handler:    _PixService_DepositAmount_Handler,
+		},
+		{
+			MethodName: "GetBalance",
+			Handler:    _PixService_GetBalance_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -35,7 +35,7 @@ var _ = Describe("Repository Test", func() {
 		mock.ExpectQuery("INSERT INTO Users").WithArgs(user.Name, user.Age, user.Phone, user.Email, user.CPF, user.Balance).WillReturnRows(pgxmock.NewRows([]string{"id"}).AddRow(1))
 		id, err := rep.CreateUser(context.Background(), user)
 		Expect(err).ShouldNot(HaveOccurred())
-		Expect(id).Should(Equal(int64(1)))
+		Expect(id).Should(Equal(1))
 
 	})
 	It("CreateUser should pass unsuccessfully", func() {
@@ -53,7 +53,7 @@ var _ = Describe("Repository Test", func() {
 		Expect(err).Should(HaveOccurred())
 	})
 	It("GetUser should pass successfully", func() {
-		user := User{
+		user := &User{
 			ID:    1,
 			Name:  "John",
 			Age:   30,
@@ -61,11 +61,47 @@ var _ = Describe("Repository Test", func() {
 			Email: "johndoe@example.com",
 			CPF:   "12345678900",
 		}
-		mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM Users WHERE ID = $1`)).WithArgs(user.ID).WillReturnRows(pgxmock.NewRows([]string{"id", "name", "age", "phone", "email", "cpf"}).AddRow(1, "John", 30, "123456789", "johndoe@example.com", "12345678900"))
+		mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM Users WHERE ID = $1`)).WithArgs(user.ID).WillReturnRows(pgxmock.NewRows([]string{"id", "name", "age", "email", "phone", "cpf"}).AddRow(user.ID, user.Name, user.Age, user.Email, user.Phone, user.CPF))
 
-		user, err = rep.GetUser(context.Background(), int64(1))
+		newUser, err := rep.GetUser(context.Background(), 1)
 		Expect(err).ShouldNot(HaveOccurred())
-		Expect(user.ID).Should(Equal(int64(1)))
-		Expect(user.Age).Should(Equal(30))
+		Expect(newUser).Should(Equal(user))
+		Expect(newUser.ID).Should(Equal(1))
+		Expect(newUser.Age).Should(Equal(int32(30)))
+	})
+	It("GetUser should fail", func() {
+		user := &User{
+			ID:    1,
+			Name:  "John",
+			Age:   30,
+			Phone: "123456789",
+			Email: "johndoe@example.com",
+			CPF:   "12345678900",
+		}
+		mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM Users WHERE ID = $1`)).WithArgs(user.ID).WillReturnError(errors.New("error while GetUser"))
+		newUser, err := rep.GetUser(context.Background(), 1)
+		Expect(err).Should(HaveOccurred())
+		Expect(newUser).ShouldNot(Equal(user))
+	})
+	It("CreatePixKey should pass successfully", func() {
+		pix := PixKey{
+			UserID:   1,
+			KeyType:  CPF,
+			KeyValue: "123.456.789-12",
+		}
+		mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO PixKey`)).WithArgs(pix.UserID, pix.KeyType, pix.KeyValue).WillReturnRows(pgxmock.NewRows([]string{"key_id"}).AddRow("1"))
+		newPix, err := rep.CreatePixKey(context.Background(), pix)
+		Expect(err).ShouldNot(HaveOccurred())
+		Expect(newPix).Should(Equal("1"))
+	})
+	It("CreatePixKey should fail", func() {
+		pix := PixKey{
+			UserID:   1,
+			KeyType:  CPF,
+			KeyValue: "123.456.789-12",
+		}
+		mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO PixKey`)).WithArgs(pix.UserID, pix.KeyType, pix.KeyValue).WillReturnError(errors.New("error while CreatePixKey"))
+		_, err := rep.CreatePixKey(context.Background(), pix)
+		Expect(err).Should(HaveOccurred())
 	})
 })
