@@ -2,17 +2,17 @@ package internal
 
 import (
 	pb "PaymentSystem/protobuf"
+	"strconv"
 )
 
 type User struct {
-	ID         int
-	Name       string
-	Age        int32
-	Phone      string
-	Email      string
-	CPF        string
-	Balance    float64
-	ListPixKey []PixKey
+	ID      int
+	Name    string
+	Age     int32
+	Phone   string
+	Email   string
+	CPF     string
+	Balance float64
 }
 
 type CreateUserRequest struct {
@@ -50,18 +50,29 @@ func ConvertGetUserResponse(user *User) (*pb.GetUserResponse, error) {
 	return g, nil
 }
 
-type PixKey struct {
-	KeyID    string
-	UserID   int
-	KeyType  KeyType
-	KeyValue string
+func ConvertUpdateUserRequest(user *pb.UpdateUserRequest) (User, error) {
+	idUserInt, err := strconv.Atoi(user.UserId)
+	if err != nil {
+		return User{}, err
+	}
+	resPB := User{
+		ID:    idUserInt,
+		Name:  user.Name,
+		Age:   user.Age,
+		Phone: user.Phone,
+		Email: user.Email,
+		CPF:   user.Cpf,
+	}
+	return resPB, nil
 }
-
-type KeyType string
-
-const (
-	Phone  KeyType = "phone"
-	Email  KeyType = "email"
-	CPF    KeyType = "cpf"
-	Random KeyType = "random"
-)
+func ConvertUpdateUserResponse(user *User) (*pb.UpdateUserResponse, error) {
+	resPB := &pb.UpdateUserResponse{
+		UserId: strconv.Itoa(user.ID),
+		Name:   user.Name,
+		Age:    user.Age,
+		Phone:  user.Phone,
+		Email:  user.Email,
+		Cpf:    user.CPF,
+	}
+	return resPB, nil
+}

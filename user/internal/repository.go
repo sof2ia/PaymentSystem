@@ -8,11 +8,31 @@ import (
 type Repository interface {
 	CreateUser(ctx context.Context, user User) (int, error)
 	GetUser(ctx context.Context, idUser int) (user *User, err error)
+	UpdateUser(ctx context.Context, user User) (*User, error)
+	DeleteUser(ctx context.Context, idUser int) error
 	CreatePixKey(ctx context.Context, pix PixKey) (string, error)
+	GetPixKey(ctx context.Context, value string) (*PixKey, error)
+	DeletePixKey(ctx context.Context, idKey string) error
 }
 
 type repository struct {
 	client pgxClient
+}
+
+func (r *repository) DeleteUser(ctx context.Context, idUser int) error {
+	_, err := Exec(ctx, r.client, `DELETE FROM Users WHERE ID = ?`, idUser)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *repository) DeletePixKey(ctx context.Context, idKey string) error {
+	_, err := Exec(ctx, r.client, `DELETE FROM PixKey WHERE ID = ?`, idKey)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (r *repository) GetUser(ctx context.Context, idUser int) (*User, error) {
@@ -54,6 +74,36 @@ func (r *repository) CreatePixKey(ctx context.Context, pix PixKey) (string, erro
 		return "", err
 	}
 	return id, nil
+}
+
+func (r *repository) GetPixKey(ctx context.Context, value string) (*PixKey, error) {
+	row := QueryRow(ctx, r.client, `SELECT * FROM PixKey WHERE key_value = $1`, value)
+	pix := &PixKey{}
+	err := row.Scan(
+		&pix.KeyID,
+		&pix.UserID,
+		&pix.KeyType,
+		&pix.KeyValue)
+	if err != nil {
+		return nil, err
+	}
+	return pix, nil
+}
+func (r *repository) UpdateUser(ctx context.Context, user User) (*User, error) {
+	_, err := Exec(ctx, r.client, `UPDATE Users SET Name = ?, Age = ?, Phone = ?, Email = ?, CPF = ? WHERE ID = ?`,
+		user.Name, user.Age, user.Phone, user.Email, user.CPF, user.ID)
+	if err != nil {
+		return nil, err
+	}
+	upUser := &User{
+		ID:    user.ID,
+		Name:  user.Name,
+		Age:   user.Age,
+		Phone: user.Phone,
+		Email: user.Email,
+		CPF:   user.CPF,
+	}
+	return upUser, nil
 }
 
 func NewRepository(client pgxClient) Repository {

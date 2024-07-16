@@ -104,4 +104,25 @@ var _ = Describe("Repository Test", func() {
 		_, err := rep.CreatePixKey(context.Background(), pix)
 		Expect(err).Should(HaveOccurred())
 	})
+	It("should GetPixKey pass successfully", func() {
+		resPix := &PixKey{
+			KeyID:    "1",
+			UserID:   1,
+			KeyType:  CPF,
+			KeyValue: "123.456.789-12",
+		}
+		mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM PixKey WHERE key_value = $1`)).WithArgs("123.456.789-12").WillReturnRows(pgxmock.NewRows([]string{"key_id", "user_id", "key_type", "key_value"}).AddRow(resPix.KeyID, resPix.UserID, resPix.KeyType, resPix.KeyValue))
+		pix, err := rep.GetPixKey(context.Background(), "123.456.789-12")
+		Expect(pix).Should(Equal(resPix))
+		Expect(err).ShouldNot(HaveOccurred())
+	})
+	It("GetPixKey should fail", func() {
+		mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM PixKey WHERE key_value = $1`)).WithArgs("123.456.789-12").WillReturnError(errors.New("error while GetPixKey"))
+		pix, err := rep.GetPixKey(context.Background(), "123.456.789-12")
+		Expect(err).Should(HaveOccurred())
+		Expect(pix).Should(BeNil())
+	})
+	//It("should UpdateUser successfully", func() {
+	//	mock.ExpectExec()
+	//})
 })

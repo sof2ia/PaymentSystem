@@ -6,6 +6,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"strconv"
 )
 
@@ -46,6 +47,34 @@ func (s *Server) GetUser(ctx context.Context, request *pb.GetUserRequest) (*pb.G
 	return userPB, nil
 }
 
+func (s *Server) UpdateUser(ctx context.Context, request *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
+	up, err := ConvertUpdateUserRequest(request)
+	user, err := s.userService.UpdateUser(ctx, up)
+	if err != nil {
+		log.Error().Err(err).Msg("error while update user")
+		return nil, status.Errorf(codes.Internal, "error while update user %s", err.Error())
+	}
+	userPB, err := ConvertUpdateUserResponse(user)
+	if err != nil {
+		log.Error().Err(err).Msg("error while ConvertUpdateUserResponse")
+		return nil, status.Errorf(codes.Internal, "error while ConvertUpdateUserResponse %s", err.Error())
+	}
+	return userPB, nil
+}
+
+func (s *Server) DeleteUser(ctx context.Context, request *pb.DeleteUserRequest) (*emptypb.Empty, error) {
+	idUserInt, err := strconv.Atoi(request.UserId)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+	err = s.userService.DeleteUser(ctx, idUserInt)
+	if err != nil {
+		log.Error().Err(err).Msg("error while delete user")
+		return nil, status.Errorf(codes.Internal, "error while delete user %s", err.Error())
+	}
+	return &emptypb.Empty{}, nil
+}
+
 func (s *Server) CreatePixKey(ctx context.Context, request *pb.CreatePixKeyRequest) (*pb.CreatePixKeyResponse, error) {
 	idUser, err := strconv.Atoi(request.UserId)
 	if err != nil {
@@ -63,4 +92,28 @@ func (s *Server) CreatePixKey(ctx context.Context, request *pb.CreatePixKeyReque
 	}
 	pixPB := &pb.CreatePixKeyResponse{KeyId: newPix}
 	return pixPB, nil
+}
+
+func (s *Server) GetPixKey(ctx context.Context, request *pb.GetPixKeyRequest) (*pb.GetPixKeyResponse, error) {
+	pix, err := s.userService.GetPixKey(ctx, request.KeyValue)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+	resPB := &pb.GetPixKeyResponse{
+		UserId:   strconv.Itoa(pix.UserID),
+		Name:     pix.Name,
+		Cpf:      pix.CPF,
+		KeyId:    pix.KeyID,
+		KeyValue: pix.KeyValue,
+	}
+	return resPB, nil
+}
+
+func (s *Server) DeletePixKey(ctx context.Context, request *pb.DeletePixKeyRequest) (*emptypb.Empty, error) {
+	err := s.userService.DeletePixKey(ctx, request.KeyValue)
+	if err != nil {
+		log.Error().Err(err).Msg("error while delete pix key")
+		return nil, status.Errorf(codes.Internal, "error while delete pix key %s", err.Error())
+	}
+	return &emptypb.Empty{}, nil
 }

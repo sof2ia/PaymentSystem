@@ -21,9 +21,13 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	PixService_CreatePixKey_FullMethodName  = "/pix.PixService/CreatePixKey"
+	PixService_GetPixKey_FullMethodName     = "/pix.PixService/GetPixKey"
+	PixService_DeletePixKey_FullMethodName  = "/pix.PixService/DeletePixKey"
 	PixService_Transfer_FullMethodName      = "/pix.PixService/Transfer"
 	PixService_CreateUser_FullMethodName    = "/pix.PixService/CreateUser"
 	PixService_GetUser_FullMethodName       = "/pix.PixService/GetUser"
+	PixService_UpdateUser_FullMethodName    = "/pix.PixService/UpdateUser"
+	PixService_DeleteUser_FullMethodName    = "/pix.PixService/DeleteUser"
 	PixService_DepositAmount_FullMethodName = "/pix.PixService/DepositAmount"
 	PixService_GetBalance_FullMethodName    = "/pix.PixService/GetBalance"
 )
@@ -33,9 +37,13 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PixServiceClient interface {
 	CreatePixKey(ctx context.Context, in *CreatePixKeyRequest, opts ...grpc.CallOption) (*CreatePixKeyResponse, error)
+	GetPixKey(ctx context.Context, in *GetPixKeyRequest, opts ...grpc.CallOption) (*GetPixKeyResponse, error)
+	DeletePixKey(ctx context.Context, in *DeletePixKeyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Transfer(ctx context.Context, in *TransferRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
+	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
+	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DepositAmount(ctx context.Context, in *DepositAmountRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetBalance(ctx context.Context, in *GetBalanceRequest, opts ...grpc.CallOption) (*GetBalanceResponse, error)
 }
@@ -51,6 +59,24 @@ func NewPixServiceClient(cc grpc.ClientConnInterface) PixServiceClient {
 func (c *pixServiceClient) CreatePixKey(ctx context.Context, in *CreatePixKeyRequest, opts ...grpc.CallOption) (*CreatePixKeyResponse, error) {
 	out := new(CreatePixKeyResponse)
 	err := c.cc.Invoke(ctx, PixService_CreatePixKey_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pixServiceClient) GetPixKey(ctx context.Context, in *GetPixKeyRequest, opts ...grpc.CallOption) (*GetPixKeyResponse, error) {
+	out := new(GetPixKeyResponse)
+	err := c.cc.Invoke(ctx, PixService_GetPixKey_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pixServiceClient) DeletePixKey(ctx context.Context, in *DeletePixKeyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, PixService_DeletePixKey_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -84,6 +110,24 @@ func (c *pixServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opts
 	return out, nil
 }
 
+func (c *pixServiceClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error) {
+	out := new(UpdateUserResponse)
+	err := c.cc.Invoke(ctx, PixService_UpdateUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pixServiceClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, PixService_DeleteUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *pixServiceClient) DepositAmount(ctx context.Context, in *DepositAmountRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, PixService_DepositAmount_FullMethodName, in, out, opts...)
@@ -107,9 +151,13 @@ func (c *pixServiceClient) GetBalance(ctx context.Context, in *GetBalanceRequest
 // for forward compatibility
 type PixServiceServer interface {
 	CreatePixKey(context.Context, *CreatePixKeyRequest) (*CreatePixKeyResponse, error)
+	GetPixKey(context.Context, *GetPixKeyRequest) (*GetPixKeyResponse, error)
+	DeletePixKey(context.Context, *DeletePixKeyRequest) (*emptypb.Empty, error)
 	Transfer(context.Context, *TransferRequest) (*emptypb.Empty, error)
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
+	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
+	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
 	DepositAmount(context.Context, *DepositAmountRequest) (*emptypb.Empty, error)
 	GetBalance(context.Context, *GetBalanceRequest) (*GetBalanceResponse, error)
 	mustEmbedUnimplementedPixServiceServer()
@@ -122,6 +170,12 @@ type UnimplementedPixServiceServer struct {
 func (UnimplementedPixServiceServer) CreatePixKey(context.Context, *CreatePixKeyRequest) (*CreatePixKeyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePixKey not implemented")
 }
+func (UnimplementedPixServiceServer) GetPixKey(context.Context, *GetPixKeyRequest) (*GetPixKeyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPixKey not implemented")
+}
+func (UnimplementedPixServiceServer) DeletePixKey(context.Context, *DeletePixKeyRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeletePixKey not implemented")
+}
 func (UnimplementedPixServiceServer) Transfer(context.Context, *TransferRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Transfer not implemented")
 }
@@ -130,6 +184,12 @@ func (UnimplementedPixServiceServer) CreateUser(context.Context, *CreateUserRequ
 }
 func (UnimplementedPixServiceServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
+}
+func (UnimplementedPixServiceServer) UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
+}
+func (UnimplementedPixServiceServer) DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
 }
 func (UnimplementedPixServiceServer) DepositAmount(context.Context, *DepositAmountRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DepositAmount not implemented")
@@ -164,6 +224,42 @@ func _PixService_CreatePixKey_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PixServiceServer).CreatePixKey(ctx, req.(*CreatePixKeyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PixService_GetPixKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPixKeyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PixServiceServer).GetPixKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PixService_GetPixKey_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PixServiceServer).GetPixKey(ctx, req.(*GetPixKeyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PixService_DeletePixKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeletePixKeyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PixServiceServer).DeletePixKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PixService_DeletePixKey_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PixServiceServer).DeletePixKey(ctx, req.(*DeletePixKeyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -222,6 +318,42 @@ func _PixService_GetUser_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PixService_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PixServiceServer).UpdateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PixService_UpdateUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PixServiceServer).UpdateUser(ctx, req.(*UpdateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PixService_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PixServiceServer).DeleteUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PixService_DeleteUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PixServiceServer).DeleteUser(ctx, req.(*DeleteUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _PixService_DepositAmount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DepositAmountRequest)
 	if err := dec(in); err != nil {
@@ -270,6 +402,14 @@ var PixService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PixService_CreatePixKey_Handler,
 		},
 		{
+			MethodName: "GetPixKey",
+			Handler:    _PixService_GetPixKey_Handler,
+		},
+		{
+			MethodName: "DeletePixKey",
+			Handler:    _PixService_DeletePixKey_Handler,
+		},
+		{
 			MethodName: "Transfer",
 			Handler:    _PixService_Transfer_Handler,
 		},
@@ -280,6 +420,14 @@ var PixService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUser",
 			Handler:    _PixService_GetUser_Handler,
+		},
+		{
+			MethodName: "UpdateUser",
+			Handler:    _PixService_UpdateUser_Handler,
+		},
+		{
+			MethodName: "DeleteUser",
+			Handler:    _PixService_DeleteUser_Handler,
 		},
 		{
 			MethodName: "DepositAmount",

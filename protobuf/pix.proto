@@ -8,9 +8,13 @@ import "google/protobuf/empty.proto";
 
 service PixService {
   rpc CreatePixKey(CreatePixKeyRequest) returns (CreatePixKeyResponse);
+  rpc GetPixKey(GetPixKeyRequest) returns (GetPixKeyResponse);
+  rpc DeletePixKey(DeletePixKeyRequest) returns (google.protobuf.Empty);
   rpc Transfer(TransferRequest) returns (google.protobuf.Empty);
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+  rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty);
   rpc DepositAmount(DepositAmountRequest) returns (google.protobuf.Empty);
   rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse);
 }
@@ -23,6 +27,22 @@ message CreatePixKeyRequest {
 
 message CreatePixKeyResponse {
   string key_id = 1;
+}
+
+message GetPixKeyRequest {
+  string key_value = 1;
+}
+
+message GetPixKeyResponse{
+  string user_id = 1;
+  string name = 2;
+  string cpf = 3;
+  string key_id = 4;
+  string key_value = 5;
+}
+
+message DeletePixKeyRequest{
+  string key_value = 1;
 }
 
 message TransferRequest {
@@ -54,6 +74,28 @@ message GetUserResponse {
   string email = 4;
   string cpf = 5;
   double balance = 6;
+}
+
+message UpdateUserRequest {
+  string user_id = 1;
+  string name = 2;
+  int32 age = 3;
+  string phone = 4;
+  string email = 5;
+  string cpf = 6;
+}
+
+message UpdateUserResponse {
+  string user_id = 1;
+  string name = 2;
+  int32 age = 3;
+  string phone = 4;
+  string email = 5;
+  string cpf = 6;
+}
+
+message DeleteUserRequest{
+  string user_id = 1;
 }
 
 message DepositAmountRequest {

@@ -53,6 +53,37 @@ func (m *mockService) CreatePixKey(ctx context.Context, pix PixKey) (string, err
 	return args.Get(0).(string), args.Error(1)
 }
 
+func (m *mockService) GetPixKey(ctx context.Context, value string) (*GetPixKeyResponse, error) {
+	args := m.Called(ctx, value)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*GetPixKeyResponse), args.Error(1)
+}
+
+func (m *mockService) DeletePixKey(ctx context.Context, value string) error {
+	args := m.Called(ctx, value)
+	if args.Get(0) == nil {
+		return args.Error(0)
+	}
+	return args.Error(0)
+}
+func (m *mockService) DeleteUser(ctx context.Context, idUser int) error {
+	args := m.Called(ctx, idUser)
+	if args.Get(0) == nil {
+		return args.Error(0)
+	}
+	return args.Error(0)
+}
+
+func (m *mockService) UpdateUser(ctx context.Context, user User) (*User, error) {
+	args := m.Called(ctx, user)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*User), args.Error(1)
+}
+
 var _ = Describe("Server Test", func() {
 	Context("Server Test", func() {
 		var grpcClient pb.PixServiceClient
@@ -164,6 +195,98 @@ var _ = Describe("Server Test", func() {
 			res, err := grpcClient.CreatePixKey(ctx, requiredPix)
 			Expect(err).Should(HaveOccurred())
 			Expect(res).Should(BeNil())
+		})
+		It("should GetPixKey successfully", func() {
+			value := &pb.GetPixKeyRequest{KeyValue: "123.456.789-01"}
+			servMock.On("GetPixKey", mock.Anything, "123.456.789-01").Return(&GetPixKeyResponse{
+				UserID:   1,
+				Name:     "Name Test",
+				CPF:      "123.456.789-01",
+				KeyID:    "1",
+				KeyValue: "123.***.***-01",
+			}, nil)
+			res, err := grpcClient.GetPixKey(context.Background(), value)
+			Expect(err).ShouldNot(HaveOccurred())
+			Expect(res.UserId).Should(Equal("1"))
+			Expect(res.KeyId).Should(Equal("1"))
+			Expect(res.Name).Should(Equal("Name Test"))
+			Expect(res.KeyValue).Should(Equal("123.***.***-01"))
+			Expect(res.Cpf).Should(Equal("123.456.789-01"))
+		})
+		It("GetPixKey should fail", func() {
+			value := &pb.GetPixKeyRequest{KeyValue: "123.456.789-01"}
+			servMock.On("GetPixKey", mock.Anything, "123.456.789-01").Return((*GetPixKeyResponse)(nil), errors.New("error while GetPixKey"))
+			res, err := grpcClient.GetPixKey(context.Background(), value)
+			Expect(err).Should(HaveOccurred())
+			Expect(res).Should(BeNil())
+		})
+		It("should DeletePixKey successfully", func() {
+			request := &pb.DeletePixKeyRequest{KeyValue: "123.456.789-01"}
+			servMock.On("DeletePixKey", mock.Anything, request.KeyValue).Return(nil)
+			_, err := grpcClient.DeletePixKey(context.Background(), request)
+			Expect(err).ShouldNot(HaveOccurred())
+		})
+		It("DeletePixKey should fail", func() {
+			request := &pb.DeletePixKeyRequest{KeyValue: "123.456.789-01"}
+			servMock.On("DeletePixKey", mock.Anything, request.KeyValue).Return(errors.New("error while DeletePixKey"))
+			_, err := grpcClient.DeletePixKey(context.Background(), request)
+			Expect(err).Should(HaveOccurred())
+		})
+		It("should DeleteUser successfully", func() {
+			request := &pb.DeleteUserRequest{UserId: "1"}
+			servMock.On("DeleteUser", mock.Anything, 1).Return(nil)
+			_, err := grpcClient.DeleteUser(context.Background(), request)
+			Expect(err).ShouldNot(HaveOccurred())
+		})
+		It("DeleteUser should fail", func() {
+			request := &pb.DeleteUserRequest{UserId: "1"}
+			servMock.On("DeleteUser", mock.Anything, 1).Return(errors.New("error while DeleteUser"))
+			_, err := grpcClient.DeleteUser(context.Background(), request)
+			Expect(err).Should(HaveOccurred())
+		})
+		It(" should UpdateUser successfully", func() {
+			request := &pb.UpdateUserRequest{
+				UserId: "1",
+				Name:   "Name First",
+				Age:    20,
+				Phone:  "+5512912345678",
+				Email:  "name1@gmail.com",
+				Cpf:    "123.456.789-12",
+			}
+			user := User{
+				ID:    1,
+				Name:  "Name First",
+				Age:   20,
+				Phone: "+5512912345678",
+				Email: "name1@gmail.com",
+				CPF:   "123.456.789-12",
+			}
+
+			servMock.On("UpdateUser", mock.Anything, user).Return(&user, nil)
+			up, err := grpcClient.UpdateUser(context.Background(), request)
+			Expect(err).ShouldNot(HaveOccurred())
+			Expect(up.UserId).Should(Equal("1"))
+		})
+		It("UpdateUser should fail", func() {
+			request := &pb.UpdateUserRequest{
+				UserId: "1",
+				Name:   "Name First",
+				Age:    20,
+				Phone:  "+5512912345678",
+				Email:  "name1@gmail.com",
+				Cpf:    "123.456.789-12",
+			}
+			user := User{
+				ID:    1,
+				Name:  "Name First",
+				Age:   20,
+				Phone: "+5512912345678",
+				Email: "name1@gmail.com",
+				CPF:   "123.456.789-12",
+			}
+			servMock.On("UpdateUser", mock.Anything, user).Return(nil, errors.New("error while UpdateUser"))
+			_, err := grpcClient.UpdateUser(context.Background(), request)
+			Expect(err).Should(HaveOccurred())
 		})
 	})
 })
