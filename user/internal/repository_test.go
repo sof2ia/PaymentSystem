@@ -122,7 +122,57 @@ var _ = Describe("Repository Test", func() {
 		Expect(err).Should(HaveOccurred())
 		Expect(pix).Should(BeNil())
 	})
-	//It("should UpdateUser successfully", func() {
-	//	mock.ExpectExec()
-	//})
+	It("should UpdateUser successfully", func() {
+		user := User{
+			ID:    1,
+			Name:  "John",
+			Age:   30,
+			Phone: "123456789",
+			Email: "johndoe@example.com",
+			CPF:   "12345678900",
+		}
+		mock.ExpectExec(regexp.QuoteMeta(`UPDATE Users SET Name = $1, Age = $2, Phone = $3, Email = $4, CPF = $5 WHERE ID =$6`)).WithArgs(user.Name, user.Age, user.Phone, user.Email, user.CPF, user.ID).WillReturnResult(pgxmock.NewResult("", 1))
+		up, err := rep.UpdateUser(context.Background(), user)
+		Expect(err).ShouldNot(HaveOccurred())
+		Expect(up.ID).Should(Equal(1))
+		Expect(up.Name).Should(Equal("John"))
+		Expect(up.Age).Should(Equal(int32(30)))
+		Expect(up.Phone).Should(Equal("123456789"))
+		Expect(up.Email).Should(Equal("johndoe@example.com"))
+		Expect(up.CPF).Should(Equal("12345678900"))
+	})
+	It("UpdateUser should fail", func() {
+		user := User{
+			ID:    1,
+			Name:  "John",
+			Age:   30,
+			Phone: "123456789",
+			Email: "johndoe@example.com",
+			CPF:   "12345678900",
+		}
+		mock.ExpectExec(regexp.QuoteMeta(`UPDATE Users SET Name = $1, Age = $2, Phone = $3, Email = $4, CPF = $5 WHERE ID =$6`)).WithArgs(user.Name, user.Age, user.Phone, user.Email, user.CPF, user.ID).WillReturnError(errors.New("error while UpdateUser"))
+		up, err := rep.UpdateUser(context.Background(), user)
+		Expect(err).Should(HaveOccurred())
+		Expect(up).Should(BeNil())
+	})
+	It("should DeleteUser successfully", func() {
+		mock.ExpectExec(regexp.QuoteMeta(`DELETE FROM Users WHERE ID = ?`)).WithArgs(1).WillReturnResult(pgxmock.NewResult("", 1))
+		err := rep.DeleteUser(context.Background(), 1)
+		Expect(err).ShouldNot(HaveOccurred())
+	})
+	It("DeleteUser should fail", func() {
+		mock.ExpectExec(regexp.QuoteMeta(`DELETE FROM Users WHERE ID = ?`)).WithArgs(1).WillReturnError(errors.New("error while DeleteUser"))
+		err := rep.DeleteUser(context.Background(), 1)
+		Expect(err).Should(HaveOccurred())
+	})
+	It("should DeletePixKey successfully", func() {
+		mock.ExpectExec(regexp.QuoteMeta(`DELETE FROM PixKey WHERE ID = ?`)).WithArgs("1").WillReturnResult(pgxmock.NewResult("", 1))
+		err := rep.DeletePixKey(context.Background(), "1")
+		Expect(err).ShouldNot(HaveOccurred())
+	})
+	It("DeletePixKey should fail", func() {
+		mock.ExpectExec(regexp.QuoteMeta(`DELETE FROM PixKey WHERE ID = ?`)).WithArgs("1").WillReturnError(errors.New("error while DeletePixKey"))
+		err := rep.DeletePixKey(context.Background(), "1")
+		Expect(err).Should(HaveOccurred())
+	})
 })

@@ -90,7 +90,7 @@ func (r *repository) GetPixKey(ctx context.Context, value string) (*PixKey, erro
 	return pix, nil
 }
 func (r *repository) UpdateUser(ctx context.Context, user User) (*User, error) {
-	_, err := Exec(ctx, r.client, `UPDATE Users SET Name = ?, Age = ?, Phone = ?, Email = ?, CPF = ? WHERE ID = ?`,
+	_, err := Exec(ctx, r.client, `UPDATE Users SET Name = $1, Age = $2, Phone = $3, Email = $4, CPF = $5 WHERE ID =$6`,
 		user.Name, user.Age, user.Phone, user.Email, user.CPF, user.ID)
 	if err != nil {
 		return nil, err

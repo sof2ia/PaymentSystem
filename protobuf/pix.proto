@@ -7,16 +7,19 @@ package pix;
 import "google/protobuf/empty.proto";
 
 service PixService {
-  rpc CreatePixKey(CreatePixKeyRequest) returns (CreatePixKeyResponse);
-  rpc GetPixKey(GetPixKeyRequest) returns (GetPixKeyResponse);
-  rpc DeletePixKey(DeletePixKeyRequest) returns (google.protobuf.Empty);
   rpc Transfer(TransferRequest) returns (google.protobuf.Empty);
+  rpc DepositAmount(DepositAmountRequest) returns (google.protobuf.Empty);
+  rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse);
+}
+
+service UserService{
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
   rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
   rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty);
-  rpc DepositAmount(DepositAmountRequest) returns (google.protobuf.Empty);
-  rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse);
+  rpc CreatePixKey(CreatePixKeyRequest) returns (CreatePixKeyResponse);
+  rpc GetPixKey(GetPixKeyRequest) returns (GetPixKeyResponse);
+  rpc DeletePixKey(DeletePixKeyRequest) returns (google.protobuf.Empty);
 }
 
 message CreatePixKeyRequest {

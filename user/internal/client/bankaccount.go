@@ -24,3 +24,7 @@ func (b *bankAccountClient) GetBalance(ctx context.Context, userID int) (Balance
 	}
 	return Balance(res.Balance), nil
 }
+
+func NewBankAccountClient(client pb.PixServiceClient) BankAccount {
+	return &bankAccountClient{client: client}
+}

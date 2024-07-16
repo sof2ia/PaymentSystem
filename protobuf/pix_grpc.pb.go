@@ -20,14 +20,7 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	PixService_CreatePixKey_FullMethodName  = "/pix.PixService/CreatePixKey"
-	PixService_GetPixKey_FullMethodName     = "/pix.PixService/GetPixKey"
-	PixService_DeletePixKey_FullMethodName  = "/pix.PixService/DeletePixKey"
 	PixService_Transfer_FullMethodName      = "/pix.PixService/Transfer"
-	PixService_CreateUser_FullMethodName    = "/pix.PixService/CreateUser"
-	PixService_GetUser_FullMethodName       = "/pix.PixService/GetUser"
-	PixService_UpdateUser_FullMethodName    = "/pix.PixService/UpdateUser"
-	PixService_DeleteUser_FullMethodName    = "/pix.PixService/DeleteUser"
 	PixService_DepositAmount_FullMethodName = "/pix.PixService/DepositAmount"
 	PixService_GetBalance_FullMethodName    = "/pix.PixService/GetBalance"
 )
@@ -36,14 +29,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PixServiceClient interface {
-	CreatePixKey(ctx context.Context, in *CreatePixKeyRequest, opts ...grpc.CallOption) (*CreatePixKeyResponse, error)
-	GetPixKey(ctx context.Context, in *GetPixKeyRequest, opts ...grpc.CallOption) (*GetPixKeyResponse, error)
-	DeletePixKey(ctx context.Context, in *DeletePixKeyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Transfer(ctx context.Context, in *TransferRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
-	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
-	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
-	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DepositAmount(ctx context.Context, in *DepositAmountRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetBalance(ctx context.Context, in *GetBalanceRequest, opts ...grpc.CallOption) (*GetBalanceResponse, error)
 }
@@ -56,72 +42,9 @@ func NewPixServiceClient(cc grpc.ClientConnInterface) PixServiceClient {
 	return &pixServiceClient{cc}
 }
 
-func (c *pixServiceClient) CreatePixKey(ctx context.Context, in *CreatePixKeyRequest, opts ...grpc.CallOption) (*CreatePixKeyResponse, error) {
-	out := new(CreatePixKeyResponse)
-	err := c.cc.Invoke(ctx, PixService_CreatePixKey_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *pixServiceClient) GetPixKey(ctx context.Context, in *GetPixKeyRequest, opts ...grpc.CallOption) (*GetPixKeyResponse, error) {
-	out := new(GetPixKeyResponse)
-	err := c.cc.Invoke(ctx, PixService_GetPixKey_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *pixServiceClient) DeletePixKey(ctx context.Context, in *DeletePixKeyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, PixService_DeletePixKey_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *pixServiceClient) Transfer(ctx context.Context, in *TransferRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, PixService_Transfer_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *pixServiceClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
-	out := new(CreateUserResponse)
-	err := c.cc.Invoke(ctx, PixService_CreateUser_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *pixServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
-	out := new(GetUserResponse)
-	err := c.cc.Invoke(ctx, PixService_GetUser_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *pixServiceClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error) {
-	out := new(UpdateUserResponse)
-	err := c.cc.Invoke(ctx, PixService_UpdateUser_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *pixServiceClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, PixService_DeleteUser_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -150,14 +73,7 @@ func (c *pixServiceClient) GetBalance(ctx context.Context, in *GetBalanceRequest
 // All implementations must embed UnimplementedPixServiceServer
 // for forward compatibility
 type PixServiceServer interface {
-	CreatePixKey(context.Context, *CreatePixKeyRequest) (*CreatePixKeyResponse, error)
-	GetPixKey(context.Context, *GetPixKeyRequest) (*GetPixKeyResponse, error)
-	DeletePixKey(context.Context, *DeletePixKeyRequest) (*emptypb.Empty, error)
 	Transfer(context.Context, *TransferRequest) (*emptypb.Empty, error)
-	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
-	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
-	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
-	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
 	DepositAmount(context.Context, *DepositAmountRequest) (*emptypb.Empty, error)
 	GetBalance(context.Context, *GetBalanceRequest) (*GetBalanceResponse, error)
 	mustEmbedUnimplementedPixServiceServer()
@@ -167,29 +83,8 @@ type PixServiceServer interface {
 type UnimplementedPixServiceServer struct {
 }
 
-func (UnimplementedPixServiceServer) CreatePixKey(context.Context, *CreatePixKeyRequest) (*CreatePixKeyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreatePixKey not implemented")
-}
-func (UnimplementedPixServiceServer) GetPixKey(context.Context, *GetPixKeyRequest) (*GetPixKeyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPixKey not implemented")
-}
-func (UnimplementedPixServiceServer) DeletePixKey(context.Context, *DeletePixKeyRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeletePixKey not implemented")
-}
 func (UnimplementedPixServiceServer) Transfer(context.Context, *TransferRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Transfer not implemented")
-}
-func (UnimplementedPixServiceServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
-}
-func (UnimplementedPixServiceServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
-}
-func (UnimplementedPixServiceServer) UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
-}
-func (UnimplementedPixServiceServer) DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
 }
 func (UnimplementedPixServiceServer) DepositAmount(context.Context, *DepositAmountRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DepositAmount not implemented")
@@ -210,60 +105,6 @@ func RegisterPixServiceServer(s grpc.ServiceRegistrar, srv PixServiceServer) {
 	s.RegisterService(&PixService_ServiceDesc, srv)
 }
 
-func _PixService_CreatePixKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreatePixKeyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PixServiceServer).CreatePixKey(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PixService_CreatePixKey_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PixServiceServer).CreatePixKey(ctx, req.(*CreatePixKeyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PixService_GetPixKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetPixKeyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PixServiceServer).GetPixKey(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PixService_GetPixKey_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PixServiceServer).GetPixKey(ctx, req.(*GetPixKeyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PixService_DeletePixKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeletePixKeyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PixServiceServer).DeletePixKey(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PixService_DeletePixKey_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PixServiceServer).DeletePixKey(ctx, req.(*DeletePixKeyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _PixService_Transfer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TransferRequest)
 	if err := dec(in); err != nil {
@@ -278,78 +119,6 @@ func _PixService_Transfer_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PixServiceServer).Transfer(ctx, req.(*TransferRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PixService_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateUserRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PixServiceServer).CreateUser(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PixService_CreateUser_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PixServiceServer).CreateUser(ctx, req.(*CreateUserRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PixService_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PixServiceServer).GetUser(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PixService_GetUser_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PixServiceServer).GetUser(ctx, req.(*GetUserRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PixService_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateUserRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PixServiceServer).UpdateUser(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PixService_UpdateUser_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PixServiceServer).UpdateUser(ctx, req.(*UpdateUserRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PixService_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteUserRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PixServiceServer).DeleteUser(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PixService_DeleteUser_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PixServiceServer).DeleteUser(ctx, req.(*DeleteUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -398,36 +167,8 @@ var PixService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*PixServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreatePixKey",
-			Handler:    _PixService_CreatePixKey_Handler,
-		},
-		{
-			MethodName: "GetPixKey",
-			Handler:    _PixService_GetPixKey_Handler,
-		},
-		{
-			MethodName: "DeletePixKey",
-			Handler:    _PixService_DeletePixKey_Handler,
-		},
-		{
 			MethodName: "Transfer",
 			Handler:    _PixService_Transfer_Handler,
-		},
-		{
-			MethodName: "CreateUser",
-			Handler:    _PixService_CreateUser_Handler,
-		},
-		{
-			MethodName: "GetUser",
-			Handler:    _PixService_GetUser_Handler,
-		},
-		{
-			MethodName: "UpdateUser",
-			Handler:    _PixService_UpdateUser_Handler,
-		},
-		{
-			MethodName: "DeleteUser",
-			Handler:    _PixService_DeleteUser_Handler,
 		},
 		{
 			MethodName: "DepositAmount",
@@ -436,6 +177,318 @@ var PixService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBalance",
 			Handler:    _PixService_GetBalance_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "protobuf/pix.proto",
+}
+
+const (
+	UserService_CreateUser_FullMethodName   = "/pix.UserService/CreateUser"
+	UserService_GetUser_FullMethodName      = "/pix.UserService/GetUser"
+	UserService_UpdateUser_FullMethodName   = "/pix.UserService/UpdateUser"
+	UserService_DeleteUser_FullMethodName   = "/pix.UserService/DeleteUser"
+	UserService_CreatePixKey_FullMethodName = "/pix.UserService/CreatePixKey"
+	UserService_GetPixKey_FullMethodName    = "/pix.UserService/GetPixKey"
+	UserService_DeletePixKey_FullMethodName = "/pix.UserService/DeletePixKey"
+)
+
+// UserServiceClient is the client API for UserService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type UserServiceClient interface {
+	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
+	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
+	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
+	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	CreatePixKey(ctx context.Context, in *CreatePixKeyRequest, opts ...grpc.CallOption) (*CreatePixKeyResponse, error)
+	GetPixKey(ctx context.Context, in *GetPixKeyRequest, opts ...grpc.CallOption) (*GetPixKeyResponse, error)
+	DeletePixKey(ctx context.Context, in *DeletePixKeyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+}
+
+type userServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
+	return &userServiceClient{cc}
+}
+
+func (c *userServiceClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
+	out := new(CreateUserResponse)
+	err := c.cc.Invoke(ctx, UserService_CreateUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
+	out := new(GetUserResponse)
+	err := c.cc.Invoke(ctx, UserService_GetUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error) {
+	out := new(UpdateUserResponse)
+	err := c.cc.Invoke(ctx, UserService_UpdateUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, UserService_DeleteUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) CreatePixKey(ctx context.Context, in *CreatePixKeyRequest, opts ...grpc.CallOption) (*CreatePixKeyResponse, error) {
+	out := new(CreatePixKeyResponse)
+	err := c.cc.Invoke(ctx, UserService_CreatePixKey_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetPixKey(ctx context.Context, in *GetPixKeyRequest, opts ...grpc.CallOption) (*GetPixKeyResponse, error) {
+	out := new(GetPixKeyResponse)
+	err := c.cc.Invoke(ctx, UserService_GetPixKey_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) DeletePixKey(ctx context.Context, in *DeletePixKeyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, UserService_DeletePixKey_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// UserServiceServer is the server API for UserService service.
+// All implementations must embed UnimplementedUserServiceServer
+// for forward compatibility
+type UserServiceServer interface {
+	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
+	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
+	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
+	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
+	CreatePixKey(context.Context, *CreatePixKeyRequest) (*CreatePixKeyResponse, error)
+	GetPixKey(context.Context, *GetPixKeyRequest) (*GetPixKeyResponse, error)
+	DeletePixKey(context.Context, *DeletePixKeyRequest) (*emptypb.Empty, error)
+	mustEmbedUnimplementedUserServiceServer()
+}
+
+// UnimplementedUserServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedUserServiceServer struct {
+}
+
+func (UnimplementedUserServiceServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
+}
+func (UnimplementedUserServiceServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
+}
+func (UnimplementedUserServiceServer) UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
+}
+func (UnimplementedUserServiceServer) DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
+}
+func (UnimplementedUserServiceServer) CreatePixKey(context.Context, *CreatePixKeyRequest) (*CreatePixKeyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreatePixKey not implemented")
+}
+func (UnimplementedUserServiceServer) GetPixKey(context.Context, *GetPixKeyRequest) (*GetPixKeyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPixKey not implemented")
+}
+func (UnimplementedUserServiceServer) DeletePixKey(context.Context, *DeletePixKeyRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeletePixKey not implemented")
+}
+func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
+
+// UnsafeUserServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to UserServiceServer will
+// result in compilation errors.
+type UnsafeUserServiceServer interface {
+	mustEmbedUnimplementedUserServiceServer()
+}
+
+func RegisterUserServiceServer(s grpc.ServiceRegistrar, srv UserServiceServer) {
+	s.RegisterService(&UserService_ServiceDesc, srv)
+}
+
+func _UserService_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).CreateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_CreateUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).CreateUser(ctx, req.(*CreateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_GetUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetUser(ctx, req.(*GetUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_UpdateUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdateUser(ctx, req.(*UpdateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).DeleteUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_DeleteUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).DeleteUser(ctx, req.(*DeleteUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_CreatePixKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreatePixKeyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).CreatePixKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_CreatePixKey_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).CreatePixKey(ctx, req.(*CreatePixKeyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetPixKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPixKeyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetPixKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_GetPixKey_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetPixKey(ctx, req.(*GetPixKeyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_DeletePixKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeletePixKeyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).DeletePixKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_DeletePixKey_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).DeletePixKey(ctx, req.(*DeletePixKeyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var UserService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pix.UserService",
+	HandlerType: (*UserServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateUser",
+			Handler:    _UserService_CreateUser_Handler,
+		},
+		{
+			MethodName: "GetUser",
+			Handler:    _UserService_GetUser_Handler,
+		},
+		{
+			MethodName: "UpdateUser",
+			Handler:    _UserService_UpdateUser_Handler,
+		},
+		{
+			MethodName: "DeleteUser",
+			Handler:    _UserService_DeleteUser_Handler,
+		},
+		{
+			MethodName: "CreatePixKey",
+			Handler:    _UserService_CreatePixKey_Handler,
+		},
+		{
+			MethodName: "GetPixKey",
+			Handler:    _UserService_GetPixKey_Handler,
+		},
+		{
+			MethodName: "DeletePixKey",
+			Handler:    _UserService_DeletePixKey_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

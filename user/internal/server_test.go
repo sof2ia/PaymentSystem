@@ -21,7 +21,7 @@ type mockService struct {
 func dialer(service2 *mockService) func(context.Context, string) (net.Conn, error) {
 	listener := bufconn.Listen(1024 * 1024)
 	server := grpc.NewServer()
-	pb.RegisterPixServiceServer(server, &Server{userService: service2})
+	pb.RegisterPixServiceServer(server, &Server{UserService: service2})
 	go func() {
 		if err := server.Serve(listener); err != nil {
 			log.Fatalf("failed to start the Server: %v", err)

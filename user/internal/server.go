@@ -11,8 +11,8 @@ import (
 )
 
 type Server struct {
-	pb.UnimplementedPixServiceServer
-	userService Service
+	pb.UnimplementedUserServiceServer
+	UserService Service
 }
 
 func (s *Server) CreateUser(ctx context.Context, user *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
@@ -20,7 +20,7 @@ func (s *Server) CreateUser(ctx context.Context, user *pb.CreateUserRequest) (*p
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
-	userID, err := s.userService.CreateUser(ctx, req)
+	userID, err := s.UserService.CreateUser(ctx, req)
 	if err != nil {
 		log.Error().Err(err).Msg("error while CreateUser")
 		return nil, status.Errorf(codes.Internal, "error while CreateUser %s", err.Error())
@@ -34,7 +34,7 @@ func (s *Server) GetUser(ctx context.Context, request *pb.GetUserRequest) (*pb.G
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
-	user, err := s.userService.GetUser(ctx, idUser)
+	user, err := s.UserService.GetUser(ctx, idUser)
 	if err != nil {
 		log.Error().Err(err).Msg("error while GetUser")
 		return nil, status.Errorf(codes.Internal, "error while GetUser %s", err.Error())
@@ -49,7 +49,7 @@ func (s *Server) GetUser(ctx context.Context, request *pb.GetUserRequest) (*pb.G
 
 func (s *Server) UpdateUser(ctx context.Context, request *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
 	up, err := ConvertUpdateUserRequest(request)
-	user, err := s.userService.UpdateUser(ctx, up)
+	user, err := s.UserService.UpdateUser(ctx, up)
 	if err != nil {
 		log.Error().Err(err).Msg("error while update user")
 		return nil, status.Errorf(codes.Internal, "error while update user %s", err.Error())
@@ -67,7 +67,7 @@ func (s *Server) DeleteUser(ctx context.Context, request *pb.DeleteUserRequest) 
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
-	err = s.userService.DeleteUser(ctx, idUserInt)
+	err = s.UserService.DeleteUser(ctx, idUserInt)
 	if err != nil {
 		log.Error().Err(err).Msg("error while delete user")
 		return nil, status.Errorf(codes.Internal, "error while delete user %s", err.Error())
@@ -85,7 +85,7 @@ func (s *Server) CreatePixKey(ctx context.Context, request *pb.CreatePixKeyReque
 		KeyType:  KeyType(request.KeyType),
 		KeyValue: request.KeyValue,
 	}
-	newPix, err := s.userService.CreatePixKey(ctx, requiredPix)
+	newPix, err := s.UserService.CreatePixKey(ctx, requiredPix)
 	if err != nil {
 		log.Error().Err(err).Msg("error while CreatePixKey")
 		return nil, status.Errorf(codes.Internal, "error while CreatePixKey %s", err.Error())
@@ -95,7 +95,7 @@ func (s *Server) CreatePixKey(ctx context.Context, request *pb.CreatePixKeyReque
 }
 
 func (s *Server) GetPixKey(ctx context.Context, request *pb.GetPixKeyRequest) (*pb.GetPixKeyResponse, error) {
-	pix, err := s.userService.GetPixKey(ctx, request.KeyValue)
+	pix, err := s.UserService.GetPixKey(ctx, request.KeyValue)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
@@ -110,7 +110,7 @@ func (s *Server) GetPixKey(ctx context.Context, request *pb.GetPixKeyRequest) (*
 }
 
 func (s *Server) DeletePixKey(ctx context.Context, request *pb.DeletePixKeyRequest) (*emptypb.Empty, error) {
-	err := s.userService.DeletePixKey(ctx, request.KeyValue)
+	err := s.UserService.DeletePixKey(ctx, request.KeyValue)
 	if err != nil {
 		log.Error().Err(err).Msg("error while delete pix key")
 		return nil, status.Errorf(codes.Internal, "error while delete pix key %s", err.Error())
