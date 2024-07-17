@@ -1,4 +1,4 @@
-package bankaccount_test
+package internal_test
 
 import (
 	. "github.com/onsi/ginkgo/v2"

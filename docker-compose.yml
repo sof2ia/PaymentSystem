@@ -1,0 +1,25 @@
+version: '3.0'
+
+services:
+  user:
+    container_name: "user"
+    build: docker
+    ports:
+      - "9001:9001"
+    environment:
+      DATABASE_URL: "host=user_db user=postgres password=postgres dbname=user sslmode=disable"
+    depends_on:
+      - user_db
+  user_db:
+    container_name: "user_db"
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: user
+volumes:
+  pgdata:

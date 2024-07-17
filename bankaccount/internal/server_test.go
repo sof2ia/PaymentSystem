@@ -1,4 +1,4 @@
-package bankaccount
+package internal
 
 import (
 	pb "PaymentSystem/protobuf"
@@ -25,7 +25,7 @@ func dialer(service2 *mockService) func(context.Context, string) (net.Conn, erro
 	listener := bufconn.Listen(1024 * 1024)
 	server := grpc.NewServer()
 	pb.RegisterPixServiceServer(server, &Server{
-		serviceBankAccount: service2,
+		ServiceBankAccount: service2,
 	})
 	go func() {
 		if err := server.Serve(listener); err != nil {

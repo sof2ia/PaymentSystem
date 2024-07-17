@@ -1,7 +1,6 @@
-package bankaccount
+package internal
 
 import (
-	"PaymentSystem/bankaccount/internal"
 	"context"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
@@ -15,7 +14,7 @@ type Repository interface {
 }
 
 type repository struct {
-	Client internal.DynamoDBClient
+	Client DynamoDBClient
 }
 
 func (r *repository) Save(ctx context.Context, mov Movement) error {
@@ -27,7 +26,7 @@ func (r *repository) Save(ctx context.Context, mov Movement) error {
 		Item:      movMap,
 		TableName: aws.String("Movement"),
 	}
-	_, err = internal.PutItem(ctx, r.Client, putItem)
+	_, err = PutItem(ctx, r.Client, putItem)
 	return err
 }
 
@@ -43,7 +42,7 @@ func (r *repository) ListMovementsByUser(ctx context.Context, idUser string) ([]
 		ExpressionAttributeValues: expr.Values(),
 		KeyConditionExpression:    expr.KeyCondition(),
 	}
-	output, err := internal.Query(ctx, r.Client, input)
+	output, err := Query(ctx, r.Client, input)
 	if err != nil {
 		return nil, err
 	}
@@ -55,6 +54,6 @@ func (r *repository) ListMovementsByUser(ctx context.Context, idUser string) ([]
 	return movements, err
 }
 
-func NewRepository(client internal.DynamoDBClient) Repository {
+func NewRepository(client DynamoDBClient) Repository {
 	return &repository{Client: client}
 }

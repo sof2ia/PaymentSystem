@@ -1,11 +1,11 @@
 package main
 
 import (
+	"PaymentSystem/bankaccount/internal"
 	pb "PaymentSystem/protobuf"
-	"PaymentSystem/user/internal"
-	"PaymentSystem/user/internal/client"
 	"context"
-	"github.com/jackc/pgx/v5"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -14,11 +14,10 @@ import (
 )
 
 func main() {
-	conn, err := startPostgreSQL(context.Background())
+	conn, err := startDynamoDB()
 	if err != nil {
 		return
 	}
-	defer conn.Close(context.Background())
 	// Create the gRPC client
 	grpcConn, err := grpc.DialContext(context.Background(), os.Getenv("GRPC_SERVICES_SVC"),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -33,27 +32,26 @@ func main() {
 		}
 	}(grpcConn)
 
-	pixClient := pb.NewPixServiceClient(grpcConn)
-	bankAccountClient := client.NewBankAccountClient(pixClient)
-	userRep := internal.NewRepository(conn)
-	userServ := internal.NewService(userRep, bankAccountClient)
-	userSer := internal.Server{UserService: userServ}
+	repBA := internal.NewRepository(conn)
+	servBA := internal.NewService(repBA)
+	serBA := internal.Server{ServiceBankAccount: servBA}
 
 	grpcServer := grpc.NewServer()
-	pb.RegisterUserServiceServer(grpcServer, &userSer)
-	list, err := net.Listen("tcp", ":9001")
-	log.Printf("Start on port 9001")
+	pb.RegisterPixServiceServer(grpcServer, &serBA)
+	list, err := net.Listen("tcp", ":9002")
+	log.Printf("Start on port 9002")
 	err = grpcServer.Serve(list)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to serve gRPC server on port")
 	}
 }
 
-func startPostgreSQL(ctx context.Context) (*pgx.Conn, error) {
-	conn, err := pgx.Connect(ctx, os.Getenv("DATABASE_URL"))
+func startDynamoDB() (*dynamodb.Client, error) {
+	cfg, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {
-		log.Error().Err(err).Msg("Unable to connect to database:")
+		log.Error().Err(err).Msg("Failed to load default config")
 		return nil, err
 	}
-	return conn, nil
+	clientDynamodb := dynamodb.NewFromConfig(cfg)
+	return clientDynamodb, nil
 }

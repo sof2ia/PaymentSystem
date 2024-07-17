@@ -120,7 +120,7 @@ func (s *service) GetPixKey(ctx context.Context, value string) (*GetPixKeyRespon
 }
 
 func maskCPF(cpf string) string {
-	mask := cpf[:3] + ".***.***" + cpf[11:]
+	mask := cpf[:3] + "******" + cpf[9:]
 	return mask
 }
 

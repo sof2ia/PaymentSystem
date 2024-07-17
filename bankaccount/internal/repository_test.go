@@ -1,7 +1,6 @@
-package bankaccount
+package internal
 
 import (
-	"PaymentSystem/bankaccount/internal"
 	"context"
 	"errors"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -16,7 +15,7 @@ import (
 
 type mockDynamoDB struct {
 	mock.Mock
-	internal.DynamoDBClient
+	DynamoDBClient
 }
 
 func (m *mockDynamoDB) PutItem(ctx context.Context, params *dynamodb.PutItemInput, optFns ...func(*dynamodb.Options)) (*dynamodb.PutItemOutput, error) {

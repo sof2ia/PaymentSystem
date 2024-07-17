@@ -1,4 +1,4 @@
-package bankaccount
+package internal
 
 import (
 	pb "PaymentSystem/protobuf"

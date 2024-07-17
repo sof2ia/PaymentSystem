@@ -92,7 +92,7 @@ var _ = Describe("Service Test", func() {
 			Age:     20,
 			Phone:   "+55 12 91234 5678",
 			Email:   "name_1@gmail.com",
-			CPF:     "123.456.789-12",
+			CPF:     "12345678912",
 			Balance: 0.0,
 		}
 		mockUser.On("CreateUser", context.Background(), user).Return(1, nil)
@@ -101,7 +101,7 @@ var _ = Describe("Service Test", func() {
 			Age:   20,
 			Phone: "+55 12 91234 5678",
 			Email: "name_1@gmail.com",
-			CPF:   "123.456.789-12",
+			CPF:   "12345678912",
 		}
 		id, err := serv.CreateUser(context.Background(), createUser)
 		Expect(err).ShouldNot(HaveOccurred())
@@ -114,7 +114,7 @@ var _ = Describe("Service Test", func() {
 			Age:     20,
 			Phone:   "+55 12 91234 5678",
 			Email:   "name_1@gmail.com",
-			CPF:     "123.456.789-12",
+			CPF:     "12345678912",
 			Balance: 0.0,
 		}
 		mockUser.On("CreateUser", context.Background(), user).Return(0, errors.New("error while CreateUser"))
@@ -123,7 +123,7 @@ var _ = Describe("Service Test", func() {
 			Age:   20,
 			Phone: "+55 12 91234 5678",
 			Email: "name_1@gmail.com",
-			CPF:   "123.456.789-12",
+			CPF:   "12345678912",
 		}
 		_, err := serv.CreateUser(context.Background(), createUser)
 		Expect(err).Should(HaveOccurred())
@@ -168,7 +168,7 @@ var _ = Describe("Service Test", func() {
 		pix := PixKey{
 			UserID:   1,
 			KeyType:  CPF,
-			KeyValue: "123.456.789-01",
+			KeyValue: "12345678912",
 		}
 		mockUser.On("CreatePixKey", mock.Anything, pix).Return("1", nil)
 		idKey, err := serv.CreatePixKey(context.Background(), pix)
@@ -179,7 +179,7 @@ var _ = Describe("Service Test", func() {
 		pix := PixKey{
 			UserID:   1,
 			KeyType:  CPF,
-			KeyValue: "123.456.789-01",
+			KeyValue: "12345678912",
 		}
 		mockUser.On("CreatePixKey", mock.Anything, pix).Return("", errors.New("error while CreatePixKey"))
 		idKey, err := serv.CreatePixKey(context.Background(), pix)
@@ -191,22 +191,22 @@ var _ = Describe("Service Test", func() {
 			KeyID:    "1",
 			UserID:   1,
 			KeyType:  CPF,
-			KeyValue: "123.456.789-01",
+			KeyValue: "12345678912",
 		}
-		mockUser.On("GetPixKey", context.Background(), "123.456.789-01").Return(pix, nil)
+		mockUser.On("GetPixKey", context.Background(), "12345678912").Return(pix, nil)
 		mockUser.On("GetUser", context.Background(), pix.UserID).Return(&User{
 			ID:    1,
 			Name:  "John",
 			Email: "johndoe@example.com",
-			CPF:   "123.456.789-01",
+			CPF:   "12345678912",
 		}, nil)
-		res, err := serv.GetPixKey(context.Background(), "123.456.789-01")
+		res, err := serv.GetPixKey(context.Background(), "12345678912")
 		Expect(err).ShouldNot(HaveOccurred())
-		Expect(res.CPF).Should(Equal("123.***.***-01"))
+		Expect(res.CPF).Should(Equal("123******12"))
 		Expect(res.UserID).Should(Equal(1))
 		Expect(res.KeyID).Should(Equal("1"))
 		Expect(res.Name).Should(Equal("John"))
-		Expect(res.KeyValue).Should(Equal("123.456.789-01"))
+		Expect(res.KeyValue).Should(Equal("12345678912"))
 
 	})
 	It("GetPixKey should fail - while GetUser", func() {
@@ -214,17 +214,17 @@ var _ = Describe("Service Test", func() {
 			KeyID:    "1",
 			UserID:   1,
 			KeyType:  CPF,
-			KeyValue: "123.456.789-01",
+			KeyValue: "12345678912",
 		}
-		mockUser.On("GetPixKey", context.Background(), "123.456.789-01").Return(pix, nil)
+		mockUser.On("GetPixKey", context.Background(), "12345678912").Return(pix, nil)
 		mockUser.On("GetUser", context.Background(), 1).Return(nil, errors.New("error while GetUser"))
-		res, err := serv.GetPixKey(context.Background(), "123.456.789-01")
+		res, err := serv.GetPixKey(context.Background(), "12345678912")
 		Expect(err).Should(HaveOccurred())
 		Expect(res).Should(BeNil())
 	})
 	It("GetPixKey should fail - while GetPixKey", func() {
-		mockUser.On("GetPixKey", context.Background(), "123.456.789-01").Return(nil, errors.New("error while GetPixKey"))
-		res, err := serv.GetPixKey(context.Background(), "123.456.789-01")
+		mockUser.On("GetPixKey", context.Background(), "12345678912").Return(nil, errors.New("error while GetPixKey"))
+		res, err := serv.GetPixKey(context.Background(), "12345678912")
 		Expect(err).Should(HaveOccurred())
 		Expect(res).Should(BeNil())
 	})
@@ -233,16 +233,16 @@ var _ = Describe("Service Test", func() {
 			KeyID:    "1",
 			UserID:   1,
 			KeyType:  CPF,
-			KeyValue: "123.456.789-01",
+			KeyValue: "12345678912",
 		}
-		mockUser.On("GetPixKey", context.Background(), "123.456.789-01").Return(pix, nil)
+		mockUser.On("GetPixKey", context.Background(), "12345678912").Return(pix, nil)
 		mockUser.On("DeletePixKey", context.Background(), "1").Return(nil)
 		err := serv.DeletePixKey(context.Background(), pix.KeyValue)
 		Expect(err).ShouldNot(HaveOccurred())
 	})
 	It("DeletePixKey should fail - while GetPixKey", func() {
-		mockUser.On("GetPixKey", context.Background(), "123.456.789-01").Return(nil, errors.New("error while GetPixKey"))
-		err := serv.DeletePixKey(context.Background(), "123.456.789-01")
+		mockUser.On("GetPixKey", context.Background(), "12345678912").Return(nil, errors.New("error while GetPixKey"))
+		err := serv.DeletePixKey(context.Background(), "12345678912")
 		Expect(err).Should(HaveOccurred())
 	})
 	It("DeletePixKey should fail - while DeletePixKey", func() {
@@ -250,9 +250,9 @@ var _ = Describe("Service Test", func() {
 			KeyID:    "1",
 			UserID:   1,
 			KeyType:  CPF,
-			KeyValue: "123.456.789-01",
+			KeyValue: "12345678912",
 		}
-		mockUser.On("GetPixKey", context.Background(), "123.456.789-01").Return(pix, nil)
+		mockUser.On("GetPixKey", context.Background(), "12345678912").Return(pix, nil)
 		mockUser.On("DeletePixKey", context.Background(), "1").Return(errors.New("while DeletePixKey"))
 		err := serv.DeletePixKey(context.Background(), pix.KeyValue)
 		Expect(err).Should(HaveOccurred())
@@ -264,7 +264,7 @@ var _ = Describe("Service Test", func() {
 			Age:   30,
 			Phone: "123456789",
 			Email: "johndoe@example.com",
-			CPF:   "123.456.789-00",
+			CPF:   "12345678912",
 		}
 		mockUser.On("GetUser", context.Background(), 1).Return(user, nil)
 		mockUser.On("DeleteUser", context.Background(), 1).Return(nil)
@@ -278,7 +278,7 @@ var _ = Describe("Service Test", func() {
 			Age:   30,
 			Phone: "123456789",
 			Email: "johndoe@example.com",
-			CPF:   "123.456.789-00",
+			CPF:   "12345678912",
 		}
 		mockUser.On("GetUser", context.Background(), 1).Return(nil, errors.New("error while GetUser"))
 		err := serv.DeleteUser(context.Background(), user.ID)
@@ -291,7 +291,7 @@ var _ = Describe("Service Test", func() {
 			Age:   30,
 			Phone: "123456789",
 			Email: "johndoe@example.com",
-			CPF:   "123.456.789-00",
+			CPF:   "12345678912",
 		}
 		mockUser.On("GetUser", context.Background(), 1).Return(user, nil)
 		mockUser.On("DeleteUser", context.Background(), 1).Return(errors.New("error while DeleteUser"))
@@ -305,7 +305,7 @@ var _ = Describe("Service Test", func() {
 			Age:   30,
 			Phone: "123456789",
 			Email: "johndoe@example.com",
-			CPF:   "123.456.789-00",
+			CPF:   "12345678912",
 		}
 		upUser := &User{
 			ID:    1,
@@ -313,7 +313,7 @@ var _ = Describe("Service Test", func() {
 			Age:   30,
 			Phone: "123456789",
 			Email: "johndoe@example.com",
-			CPF:   "123.456.789-00",
+			CPF:   "12345678912",
 		}
 		mockUser.On("GetUser", context.Background(), user.ID).Return(upUser, nil)
 		mockUser.On("UpdateUser", context.Background(), user).Return(upUser, nil)
@@ -328,7 +328,7 @@ var _ = Describe("Service Test", func() {
 			Age:   30,
 			Phone: "123456789",
 			Email: "johndoe@example.com",
-			CPF:   "123.456.789-00",
+			CPF:   "12345678912",
 		}
 		mockUser.On("GetUser", context.Background(), 1).Return(nil, errors.New("error while GetUser"))
 		up, err := serv.UpdateUser(context.Background(), user)
@@ -342,7 +342,7 @@ var _ = Describe("Service Test", func() {
 			Age:   30,
 			Phone: "123456789",
 			Email: "johndoe@example.com",
-			CPF:   "123.456.789-00",
+			CPF:   "12345678912",
 		}
 		upUser := &User{
 			ID:    1,
@@ -350,7 +350,7 @@ var _ = Describe("Service Test", func() {
 			Age:   30,
 			Phone: "123456789",
 			Email: "johndoe@example.com",
-			CPF:   "123.456.789-00",
+			CPF:   "12345678912",
 		}
 		mockUser.On("GetUser", context.Background(), user.ID).Return(upUser, nil)
 		mockUser.On("UpdateUser", context.Background(), user).Return(nil, errors.New("error while UpdateUser"))
