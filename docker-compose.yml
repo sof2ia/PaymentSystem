@@ -3,7 +3,9 @@ version: '3.0'
 services:
   user:
     container_name: "user"
-    build: docker
+    build:
+      context: user
+      dockerfile: Dockerfile
     ports:
       - "9001:9001"
     environment:

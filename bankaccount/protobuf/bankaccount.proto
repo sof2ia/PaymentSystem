@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option go_package = "github.com/sof2ia/PaymentSystem/bankaccount/protobuf/bankaccount";
+
+package bankaccount;
+
+import "google/protobuf/empty.proto";
+
+service PixService {
+  rpc Transfer(TransferRequest) returns (google.protobuf.Empty);
+  rpc DepositAmount(DepositAmountRequest) returns (google.protobuf.Empty);
+  rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse);
+}
+
+message TransferRequest {
+  string from_user_id = 1;
+  string to_pix_key = 2;
+  double amount = 3;
+}
+
+message DepositAmountRequest {
+  string amount = 1;
+  string user_id = 2;
+}
+
+message GetBalanceRequest{
+  string id_user = 1;
+}
+
+message GetBalanceResponse{
+  double balance = 1;
+}

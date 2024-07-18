@@ -1,12 +1,12 @@
 package main
 
 import (
-	pb "PaymentSystem/protobuf"
-	"PaymentSystem/user/internal"
-	"PaymentSystem/user/internal/client"
 	"context"
 	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog/log"
+	"github.com/sof2ia/PaymentSystem/user/internal"
+	"github.com/sof2ia/PaymentSystem/user/internal/client"
+	pb "github.com/sof2ia/PaymentSystem/user/protobuf"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"net"

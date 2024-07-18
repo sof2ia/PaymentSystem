@@ -13,7 +13,7 @@ RUN go get -d -v ./...
 RUN go build -o user/cmd/user .
 
 #EXPOSE the port
-EXPOSE 8000
+EXPOSE 9001
 
 # Run the executable
 CMD ["./user"]
