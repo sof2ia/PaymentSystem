@@ -1,9 +1,9 @@
 package internal
 
 import (
-	pb "PaymentSystem/protobuf"
 	"context"
 	"github.com/rs/zerolog/log"
+	pb "github.com/sof2ia/PaymentSystem/user/protobuf"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -15,6 +15,8 @@ type Server struct {
 	UserService Service
 }
 
+func (s *Server) mustEmbedUnimplementedUserServiceServer() {
+}
 func (s *Server) CreateUser(ctx context.Context, user *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
 	req, err := ConvertCreateUserRequest(user)
 	if err != nil {

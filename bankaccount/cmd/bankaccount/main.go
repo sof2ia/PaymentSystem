@@ -1,12 +1,12 @@
 package main
 
 import (
-	"PaymentSystem/bankaccount/internal"
-	pb "PaymentSystem/protobuf"
 	"context"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/rs/zerolog/log"
+	"github.com/sof2ia/PaymentSystem/bankaccount/internal"
+	pb "github.com/sof2ia/PaymentSystem/bankaccount/protobuf"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"net"

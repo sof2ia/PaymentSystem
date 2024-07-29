@@ -1,8 +1,8 @@
 package client
 
 import (
-	pb "PaymentSystem/protobuf"
 	"context"
+	pb "github.com/sof2ia/PaymentSystem/bankaccount/protobuf"
 	"strconv"
 )
 

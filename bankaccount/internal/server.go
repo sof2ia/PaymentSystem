@@ -1,9 +1,9 @@
 package internal
 
 import (
-	pb "PaymentSystem/protobuf"
 	"context"
 	"github.com/rs/zerolog/log"
+	pb "github.com/sof2ia/PaymentSystem/bankaccount/protobuf"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -13,6 +13,9 @@ import (
 type Server struct {
 	pb.UnimplementedPixServiceServer
 	ServiceBankAccount Service
+}
+
+func (s *Server) mustEmbedUnimplementedPixServiceServer() {
 }
 
 func (s *Server) Transfer(ctx context.Context, request *pb.TransferRequest) (*emptypb.Empty, error) {

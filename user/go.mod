@@ -1,4 +1,4 @@
-module  github.com/sof2ia/PaymentSystem/user
+module github.com/sof2ia/PaymentSystem/user
 
 go 1.22.5
 
@@ -9,6 +9,7 @@ require (
 	github.com/onsi/gomega v1.33.1
 	github.com/pashagolub/pgxmock/v3 v3.4.0
 	github.com/rs/zerolog v1.33.0
+	github.com/sof2ia/PaymentSystem v0.0.0-20240718184406-77880e0d908b
 	github.com/stretchr/testify v1.9.0
 	google.golang.org/grpc v1.65.0
 	google.golang.org/protobuf v1.34.2

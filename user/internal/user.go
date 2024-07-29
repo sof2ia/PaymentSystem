@@ -1,7 +1,7 @@
 package internal
 
 import (
-	pb "PaymentSystem/protobuf"
+	pb "github.com/sof2ia/PaymentSystem/user/protobuf"
 	"strconv"
 )
 

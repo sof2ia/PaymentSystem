@@ -4,9 +4,10 @@ import (
 	"context"
 	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog/log"
+	pb "github.com/sof2ia/PaymentSystem/bankaccount/protobuf"
 	"github.com/sof2ia/PaymentSystem/user/internal"
 	"github.com/sof2ia/PaymentSystem/user/internal/client"
-	pb "github.com/sof2ia/PaymentSystem/user/protobuf"
+	pb2 "github.com/sof2ia/PaymentSystem/user/protobuf"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"net"
@@ -40,7 +41,7 @@ func main() {
 	userSer := internal.Server{UserService: userServ}
 
 	grpcServer := grpc.NewServer()
-	pb.RegisterUserServiceServer(grpcServer, &userSer)
+	pb2.RegisterUserServiceServer(grpcServer, &userSer)
 	list, err := net.Listen("tcp", ":9001")
 	log.Printf("Start on port 9001")
 	err = grpcServer.Serve(list)

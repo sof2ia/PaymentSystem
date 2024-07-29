@@ -1,10 +1,10 @@
 package internal
 
 import (
-	pb "PaymentSystem/protobuf"
 	"errors"
 	"fmt"
 	"github.com/go-playground/validator/v10"
+	pb "github.com/sof2ia/PaymentSystem/bankaccount/protobuf"
 	"strconv"
 )
 
